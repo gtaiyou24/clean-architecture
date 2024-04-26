@@ -1,0 +1,55 @@
+version: "3.4"
+
+services:
+  # App
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: identity-access
+    env_file:
+      - .env.local
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/
+    command: "--reload"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # DB
+  mysql:
+    image: mysql:8.0
+    platform: linux/x86_64
+    container_name: identity-access-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+      - MYSQL_DATABASE=finance
+      - TZ=Asia/Tokyo
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./infrastructure/mysql/conf.d:/etc/mysql/conf.d
+      - identity-access-mysql-volume:/var/lib/mysql
+    tty: true
+    healthcheck:
+      # MySQL が起動しているか確認するための設定
+      test: mysqladmin ping -h 127.0.0.1 -u$$DATABASE_USERNAME -p$$DATABASE_PASSWORD
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Mail Server
+  mailhog:
+    image: mailhog/mailhog
+    container_name: identity-access-mailhog
+    ports:
+      - "8025:8025"
+
+volumes:
+  identity-access-mysql-volume:
+    driver: 'local'

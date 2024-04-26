@@ -1,0 +1,18 @@
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+
+# Auth
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+
+# Original
+di4injector==0.0.1
+slf4py==0.0.2
+
+# MySQL
+SQLAlchemy==2.0.29
+mysqlclient==2.2.1
+
+# Mail
+html2text==2024.2.26
