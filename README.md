@@ -44,6 +44,12 @@ docker-compose up --build
 
 open [localhost:8000/docs](http://localhost:8000/docs)
 
+### ✅Test
+
+```bash
+pytest -v ./test
+```
+
 ## 🔗Appendix
 
  - [VaughnVernon/IDDD_Samples - github.com](https://github.com/VaughnVernon/IDDD_Samples)
