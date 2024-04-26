@@ -1,5 +1,5 @@
 # FastAPI × DDD × Clean Architecture
-DDD API template designed with Clean Architecture using FastAPI
+API template designed with DDD and Clean Architecture using FastAPI
 
 <details><summary>📁Packages</summary>
 
