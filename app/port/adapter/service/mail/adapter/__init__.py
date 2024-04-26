@@ -1,0 +1,1 @@
+from .mail_delivery_adapter import MailDeliveryAdapter

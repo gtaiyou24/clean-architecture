@@ -9,10 +9,15 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from application import UnitOfWork
+from domain.model.mail import MailDeliveryService
 from exception import SystemException
 from port.adapter.persistence.repository.inmem import InMemUnitOfWork
 from port.adapter.persistence.repository.mysql import MySQLUnitOfWork, DataBase
 from port.adapter.resource.health import HealthResource
+from port.adapter.service.mail.adapter import MailDeliveryAdapter
+from port.adapter.service.mail.adapter.mailhog import MailHogAdapter
+from port.adapter.service.mail.adapter.sendgrid import SendGridAdapter
+from port.adapter.service.mail.mail_delivery_service_impl import MailDeliveryServiceImpl
 
 
 @asynccontextmanager
@@ -20,6 +25,8 @@ async def lifespan(app: FastAPI):
     """API 起動前と終了後に実行する処理を記載する"""
     DI_LIST = [
         DI.of(UnitOfWork, {'MySQL': MySQLUnitOfWork}, InMemUnitOfWork),
+        DI.of(MailDeliveryService, {}, MailDeliveryServiceImpl),
+        DI.of(MailDeliveryAdapter, {'SendGrid': SendGridAdapter}, MailHogAdapter),
     ]
 
     if 'MySQL' in os.getenv('DI_PROFILE_ACTIVES'):
