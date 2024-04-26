@@ -12,8 +12,8 @@ class Currency(Enum):
     YEN = '円'
     DOLLAR = 'ドル'
 
-    def of(self, amount: Decimal) -> Price:
-        return Price(Amount(amount), self)
+    def of(self, amount: str) -> Price:
+        return Price(Amount(Decimal(amount)), self)
 
 
 @dataclass(init=True, frozen=True, unsafe_hash=True)
