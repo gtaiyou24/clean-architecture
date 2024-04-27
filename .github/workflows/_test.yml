@@ -9,7 +9,7 @@ on:
         default: '3.11'
 
 jobs:
-  test:
+  unit-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,8 +20,16 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ inputs.python-version }}
-      - name: Run Test
+      - name: Run Unit Test
         run: |
           pip install -r ./app/requirements.txt
-          pip install pytest
-          pytest ./test
+          pip install pytest pytest-env
+          pytest ./test/unit
+
+  acceptance-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Acceptance Test
+        run: |
+          pip install httpx
+          pytest ./test/acceptance

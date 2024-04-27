@@ -1,13 +1,11 @@
 from fastapi import APIRouter
 
-from port.adapter.resource import APIResource
 
-
-class HealthResource(APIResource):
+class HealthResource:
     router = APIRouter(prefix='/health', tags=['Health'])
 
     def __init__(self):
         self.router.add_api_route('/check', self.check, methods=['GET'])
 
-    def check(self) -> str:
-        return 'OK'
+    def check(self) -> dict:
+        return {'health': True}

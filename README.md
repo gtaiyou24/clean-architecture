@@ -47,6 +47,8 @@ open [localhost:8000/docs](http://localhost:8000/docs)
 ### ✅Test
 
 ```bash
+pip install pytest pytest-env httpx
+
 pytest -v ./test
 ```
 
