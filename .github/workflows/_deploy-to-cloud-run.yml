@@ -33,7 +33,7 @@ env:
   REPO_NAME: ${{ inputs.registry }}
 
 concurrency:
-  group: deploy-to-cloud-run
+  group: deploy-to-cloud-run-${{ inputs.registry }}
   cancel-in-progress: true
 
 jobs:
