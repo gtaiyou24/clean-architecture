@@ -1,0 +1,27 @@
+name: _test
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        required: false
+        default: '3.11'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Run Test
+        run: |
+          pip install -r ./app/requirements.txt
+          pip install pytest
+          pytest ./test

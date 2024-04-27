@@ -13,7 +13,6 @@ on:
           - GCP cloud run
           - AWS lambda
           - AWS lightsail
-          - WIP- AWS ECS
       approval:
         description: 'type deploy/production'
         required: true
@@ -29,3 +28,9 @@ jobs:
         run: echo '::error ::`approval` に `deploy/production` と入力してください'; exit 1
       - if: ${{ github.ref_name != 'main' }}
         run: echo '::error ::`branch` は `main` を指定してください'; exit 1
+
+  test:
+    needs: check-input
+    uses: ./.github/workflows/_test.yml
+    with:
+      python-version: '3.11'
