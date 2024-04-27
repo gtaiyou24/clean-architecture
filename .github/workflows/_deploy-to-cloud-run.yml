@@ -7,6 +7,14 @@ on:
         description: 'Project ID'
         type: string
         required: true
+      workload-identity-provider:
+        description: 'Workload Identity プロバイダ'
+        type: string
+        required: true
+      service-account:
+        description: 'サービスアカウント'
+        type: string
+        required: true
       registry:
         description: 'GCR Name & Cloud Run Name'
         type: string
@@ -16,19 +24,11 @@ on:
         type: string
         required: true
         default: 'asia-northeast1'
-      workload-identity-provider:
-        description: 'Workload Identity プロバイダ'
-        type: string
-        required: false
-      service-account:
-        description: 'サービスアカウント'
-        type: string
-        required: false
 
 env:
   PROJECT_ID: ${{ inputs.project-id }}
-  GCP_WIF_PROVIDER: ${{ inputs.workload-identity-provider || secrets.GCP_WIF_PROVIDER }}
-  GCP_WIF_SERVICE_ACCOUNT: ${{ inputs.service-account || secrets.GCP_WIF_SERVICE_ACCOUNT }}
+  GCP_WIF_PROVIDER: ${{ inputs.workload-identity-provider }}
+  GCP_WIF_SERVICE_ACCOUNT: ${{ inputs.service-account }}
   REGION: ${{ inputs.region }}
   REPO_NAME: ${{ inputs.registry }}
 
