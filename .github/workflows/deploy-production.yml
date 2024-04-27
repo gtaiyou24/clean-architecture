@@ -8,7 +8,7 @@ on:
       deploy_to:
         type: choice
         description: Deploy to
-        default: all
+        default: GCP cloud run
         options:
           - GCP cloud run
           - AWS lambda
@@ -16,6 +16,12 @@ on:
       approval:
         description: 'type deploy/production'
         required: true
+      run_test:
+        type: boolean
+        description: 'run test'
+        default: true
+        required: true
+
 
 # 本番リリースワークフローを同時に実行できないようにコンカレンシーを使用
 concurrency: ${{ github.workflow }}
@@ -23,6 +29,7 @@ concurrency: ${{ github.workflow }}
 jobs:
   check-input:
     runs-on: ubuntu-latest
+    name: '👀リリースチェック'
     steps:
       - if: ${{ github.event.inputs.approval != 'deploy/production' }}
         run: echo '::error ::`approval` に `deploy/production` と入力してください'; exit 1
@@ -30,7 +37,9 @@ jobs:
         run: echo '::error ::`branch` は `main` を指定してください'; exit 1
 
   test:
+    if: ${{ github.event.inputs.run_test }}
     needs: check-input
+    name: '✅テスト'
     uses: ./.github/workflows/_test.yml
     with:
       python-version: '3.11'
