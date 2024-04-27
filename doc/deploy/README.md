@@ -59,11 +59,11 @@ gcloud iam workload-identity-pools providers create-oidc "cicd-provider" \
 
 最後に、Workload Identity プロバイダからの認証について、目的のサービスアカウントの権限の借用を許可します。
 ```bash
-# Workload Identity プロバイダにサービスアカウントを追加
+# サービスアカウントの権限の借用を許可
 gcloud iam service-accounts add-iam-policy-binding "github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
   --project="${PROJECT_ID}" \
   --role="roles/iam.workloadIdentityUser" \
-  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/cicd-pool/attribute.repository/taiyou24/clean-architecture"
+  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/cicd-pool/attribute.repository/gtaiyou24/clean-architecture"
 ```
 
 シークレット情報
