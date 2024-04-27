@@ -1,4 +1,4 @@
-name: "Deploy: Production"
+name: "🚀Deploy: Production"
 run-name: 📌  <${{ inputs.deploy_to }}> 本番環境へ ${{ github.ref_name }} をデプロイ 🚀
 
 on:
