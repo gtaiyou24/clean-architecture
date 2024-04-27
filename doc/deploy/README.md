@@ -13,41 +13,65 @@ WIP
 
 <img src="https://storage.googleapis.com/gweb-cloudblog-publish/images/Cloud_Run.max-2600x2600.jpg" height="100">
 
-GitHub Actions 経由で Cloud Run へデプロイするには、 Workload Identity プールと Workload Identity プロバイダを作成して Workload Identity 連携を設定および構成する必要があります。
+**1. IAM Service Account Credentials API を有効にする**
 ```bash
 # Google Cloud SDK と Google アカウントを連携させる
 gcloud auth login
 
+# プロジェクトを変更する
+gcloud config set project ${PROJECT_ID}
+
+gcloud services enable iamcredentials.googleapis.com \
+  --project=${PROJECT_ID}
+```
+
+**2. サービスアカウントを作成する**
+```bash
+# サービスアカウントを作成
+gcloud iam service-accounts create "github-actions"\
+ --project=${PROJECT_ID} \
+ --display-name="github actions service account" \
+ --description="github actions account deploy to GCP"
+
+# サービスアカウントが作成できたか確認
+gcloud iam service-accounts list
+```
+
+**3. Workload Identity プール・プロバイダを作成する**
+
+GitHub Actions 経由で Cloud Run へデプロイするには、 Workload Identity プールと Workload Identity プロバイダを作成して Workload Identity 連携を設定および構成する必要があります。
+```bash
 # Workload Identity プールを作成
-gcloud iam workload-identity-pools create "my-pool" \
+gcloud iam workload-identity-pools create "cicd-pool" \
   --project="${PROJECT_ID}" \
   --location="global" \
-  --display-name="Demo pool"
+  --display-name="CI/CD pool"
 
 # Workload Identity プロバイダを作成
-gcloud iam workload-identity-pools providers create-oidc "my-provider" \
+gcloud iam workload-identity-pools providers create-oidc "cicd-provider" \
   --project="${PROJECT_ID}" \
   --location="global" \
-  --workload-identity-pool="my-pool" \
-  --display-name="Demo provider" \
-  --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.aud=assertion.aud" \
+  --workload-identity-pool="cicd-pool" \
+  --display-name="CI/CD provider" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.actor=assertion.actor" \
   --issuer-uri="https://token.actions.githubusercontent.com"
 ```
 
 最後に、Workload Identity プロバイダからの認証について、目的のサービスアカウントの権限の借用を許可します。
 ```bash
-gcloud iam service-accounts add-iam-policy-binding "my-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
+# Workload Identity プロバイダにサービスアカウントを追加
+gcloud iam service-accounts add-iam-policy-binding "github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
   --project="${PROJECT_ID}" \
   --role="roles/iam.workloadIdentityUser" \
-  --member="principalSet://iam.googleapis.com/${WORKLOAD_IDENTITY_POOL_ID}/attribute.repository/my-org/my-repo"
+  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/cicd-pool/attribute.repository/taiyou24/clean-architecture"
 ```
 
 シークレット情報
 
-| Secret | Description |
-|:------:|:------------|
-| `GCP_WIF_PROVIDER` | Workload Identity プロバイダ |
-| `GCP_WIF_SERVICE_ACCOUNT` | サービスアカウント |
+| Secret | Description | Example |
+|:------:|:------------|:--------|
+| `GCP_WIF_PROVIDER` | Workload Identity プロバイダ | `projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/<プールID>/providers/<プロバイダID>` |
+| `GCP_WIF_SERVICE_ACCOUNT` | サービスアカウント | `github-actions@${PROJECT_ID}.iam.gserviceaccount.com` |
 
 変数情報
 

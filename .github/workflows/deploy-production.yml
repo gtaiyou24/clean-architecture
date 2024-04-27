@@ -52,7 +52,7 @@ jobs:
       project-id: ${{ vars.GCP_PROJECT_ID }}
       workload-identity-provider: ${{ secrets.GCP_WIF_PROVIDER }}
       service-account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
-      registry: 'xxx'
+      registry: ${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}  # リポジトリ名
       region: 'asia-northeast1'
 
   deploy-lambda:
