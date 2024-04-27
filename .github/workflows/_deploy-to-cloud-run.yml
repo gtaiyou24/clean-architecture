@@ -57,6 +57,7 @@ jobs:
       - name: Authorize Docker push
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
+      # 無料枠を超過しないように古いDockerイメージを削除
       - name: Delete old docker images
         continue-on-error: true
         run: gcloud artifacts docker images delete gcr.io/$PROJECT_ID/$REPO_NAME --quiet
