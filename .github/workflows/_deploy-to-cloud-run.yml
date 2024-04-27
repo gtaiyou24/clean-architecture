@@ -11,10 +11,12 @@ on:
         description: 'Workload Identity プロバイダ'
         type: string
         required: true
+        default: ${{ secrets.GCP_WIF_PROVIDER }}
       service-account:
         description: 'サービスアカウント'
         type: string
         required: true
+        default: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
       registry:
         description: 'GCR Name & Cloud Run Name'
         type: string

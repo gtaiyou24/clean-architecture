@@ -21,11 +21,6 @@ on:
         default: true
         required: true
 
-env:
-  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-  GCP_WIF_PROVIDER: ${{ secrets.GCP_WIF_PROVIDER }}
-  GCP_WIF_SERVICE_ACCOUNT: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
-
 # 本番リリースワークフローを同時に実行できないようにコンカレンシーを使用
 concurrency: ${{ github.workflow }}
 
@@ -53,9 +48,9 @@ jobs:
     name: '🚀 デプロイ'
     uses: ./.github/workflows/_deploy-to-cloud-run.yml
     with:
-      project-id: ${{ env.GCP_PROJECT_ID }}
-      workload-identity-provider: ${{ env.GCP_WIF_PROVIDER }}
-      service-account: ${{ env.GCP_WIF_SERVICE_ACCOUNT }}
+      project-id: ${{ vars.GCP_PROJECT_ID }}
+      # workload-identity-provider: 'projects/<プロジェクト番号>/locations/global/workloadIdentityPools/<プールID>/providers/<プロバイダID>'
+      # service-account: '<サービスアカウント>@<プロジェクトID>.iam.gserviceaccount.com'
       registry: ${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}  # リポジトリ名
       region: 'asia-northeast1'
 
