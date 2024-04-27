@@ -57,6 +57,10 @@ jobs:
       - name: Authorize Docker push
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
+      - name: Delete old docker images
+        continue-on-error: true
+        run: gcloud artifacts docker images delete gcr.io/$PROJECT_ID/$REPO_NAME --quiet
+
       - name: Build and tag the docker image
         run: |-
           docker build . --tag gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
