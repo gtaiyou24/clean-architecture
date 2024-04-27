@@ -17,4 +17,4 @@ RUN apt-get update -y \
     && pip install --no-cache-dir -r requirements.txt
 
 ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
-CMD ["start_lambda.handler"]
+CMD ["lambda.handler"]
