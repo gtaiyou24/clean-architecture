@@ -1,0 +1,31 @@
+name: "Deploy: Production"
+run-name: 📌  <${{ inputs.deploy_to }}> 本番環境へ ${{ github.ref_name }} をデプロイ 🚀
+
+on:
+  # 手動トリガー
+  workflow_dispatch:
+    inputs:
+      deploy_to:
+        type: choice
+        description: Deploy to
+        default: all
+        options:
+          - GCP cloud run
+          - AWS lambda
+          - AWS lightsail
+          - WIP- AWS ECS
+      approval:
+        description: 'type deploy/production'
+        required: true
+
+# ワークフローを同時に実行できないようにコンカレンシーを使用
+concurrency: ${{ github.workflow }}
+
+jobs:
+  check-input:
+    runs-on: ubuntu-latest
+    steps:
+      - if: ${{ github.event.inputs.approval != 'deploy/production' }}
+        run: echo '::error ::`approval` に `deploy/production` と入力してください'; exit 1
+      - if: ${{ github.ref_name != 'main' }}
+        run: echo '::error ::`branch` は `main` を指定してください'; exit 1
