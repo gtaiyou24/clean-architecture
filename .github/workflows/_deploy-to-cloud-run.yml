@@ -55,7 +55,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Authorize Docker push
-        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+        run: gcloud auth configure-docker
 
       # 無料枠を超過しないように古いDockerイメージを削除
       - name: Delete old docker images
