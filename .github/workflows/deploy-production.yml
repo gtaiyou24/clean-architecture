@@ -29,7 +29,7 @@ concurrency: ${{ github.workflow }}
 jobs:
   check-input:
     runs-on: ubuntu-latest
-    name: '👀リリースチェック'
+    name: '👀 リリースチェック'
     steps:
       - if: ${{ github.event.inputs.approval != 'deploy/production' }}
         run: echo '::error ::`approval` に `deploy/production` と入力してください'; exit 1
@@ -39,7 +39,7 @@ jobs:
   test:
     if: ${{ github.event.inputs.run_test }}
     needs: check-input
-    name: '✅テスト'
+    name: '✅ テスト'
     uses: ./.github/workflows/_test.yml
     with:
       python-version: '3.11'

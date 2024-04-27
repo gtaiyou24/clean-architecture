@@ -11,14 +11,14 @@ on:
 jobs:
   unit-test:
     runs-on: ubuntu-latest
-    name: "✅ユニットテスト"
+    name: "ユニットテスト"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ inputs.python-version }}
       - name: Run Unit Test
@@ -28,14 +28,14 @@ jobs:
           pytest ./test/unit
   acceptance-test:
     runs-on: ubuntu-latest
-    name: "✅受け入れテスト"
+    name: "受け入れテスト"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ inputs.python-version }}
       - name: Run Acceptance Test
