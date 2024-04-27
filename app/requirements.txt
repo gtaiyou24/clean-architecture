@@ -1,4 +1,4 @@
-fastapi==0.110.0
+fastapi==0.110.2
 uvicorn[standard]==0.29.0
 python-multipart==0.0.9
 
@@ -12,7 +12,7 @@ slf4py==0.0.2
 
 # MySQL
 SQLAlchemy==2.0.29
-mysqlclient==2.2.1
+mysqlclient==2.2.4
 
 # Mail
 html2text==2024.2.26
