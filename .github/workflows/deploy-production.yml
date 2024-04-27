@@ -49,10 +49,10 @@ jobs:
     uses: ./.github/workflows/_deploy-to-cloud-run.yml
     with:
       project-id: ${{ vars.GCP_PROJECT_ID }}
-      # workload-identity-provider: 'projects/<プロジェクト番号>/locations/global/workloadIdentityPools/<プールID>/providers/<プロバイダID>'
-      # service-account: '<サービスアカウント>@<プロジェクトID>.iam.gserviceaccount.com'
       registry: ${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}  # リポジトリ名
       region: 'asia-northeast1'
+      # workload-identity-provider: 'projects/<プロジェクト番号>/locations/global/workloadIdentityPools/<プールID>/providers/<プロバイダID>'
+      # service-account: '<サービスアカウント>@<プロジェクトID>.iam.gserviceaccount.com'
 
   deploy-lambda:
     if: ${{ github.event.inputs.deploy_to == 'lambda' }}

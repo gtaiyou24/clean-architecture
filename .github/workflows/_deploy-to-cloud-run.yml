@@ -7,16 +7,6 @@ on:
         description: 'Project ID'
         type: string
         required: true
-      workload-identity-provider:
-        description: 'Workload Identity プロバイダ'
-        type: string
-        required: true
-        default: ${{ secrets.GCP_WIF_PROVIDER }}
-      service-account:
-        description: 'サービスアカウント'
-        type: string
-        required: true
-        default: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
       registry:
         description: 'GCR Name & Cloud Run Name'
         type: string
@@ -26,9 +16,19 @@ on:
         type: string
         required: true
         default: 'asia-northeast1'
+      workload-identity-provider:
+        description: 'Workload Identity プロバイダ'
+        type: string
+        required: false
+      service-account:
+        description: 'サービスアカウント'
+        type: string
+        required: false
 
 env:
   PROJECT_ID: ${{ inputs.project-id }}
+  GCP_WIF_PROVIDER: ${{ inputs.workload-identity-provider || secrets.GCP_WIF_PROVIDER }}
+  GCP_WIF_SERVICE_ACCOUNT: ${{ inputs.service-account || secrets.GCP_WIF_SERVICE_ACCOUNT }}
   REGION: ${{ inputs.region }}
   REPO_NAME: ${{ inputs.registry }}
 
@@ -45,8 +45,8 @@ jobs:
         id: "auth"
         uses: "google-github-actions/auth@v2"
         with:
-          workload_identity_provider: ${{ github.event.inputs.workload-identity-provider }}
-          service_account: ${{ github.event.inputs.service-account }}
+          workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
+          service_account: ${{ env.GCP_WIF_SERVICE_ACCOUNT }}
 
       - name: Set up gcloud CLI/SDK
         uses: google-github-actions/setup-gcloud@v2
