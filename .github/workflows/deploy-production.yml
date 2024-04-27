@@ -8,11 +8,10 @@ on:
       deploy_to:
         type: choice
         description: Deploy to
-        default: GCP cloud run
+        default: cloud-run
         options:
-          - GCP cloud run
-          - AWS lambda
-          - AWS lightsail
+          - cloud-run
+          - lambda
       approval:
         description: 'type deploy/production'
         required: true
@@ -43,3 +42,26 @@ jobs:
     uses: ./.github/workflows/_test.yml
     with:
       python-version: '3.11'
+
+  deploy-cloud-run:
+    if: ${{ github.event.inputs.deploy_to == 'cloud-run' }}
+    needs: test
+    name: '🚀 デプロイ'
+    uses: ./.github/workflows/_deploy-to-cloud-run.yml
+    with:
+      project-id: 'xxx'
+      workload-identity-provider: 'xxx'
+      service-account: 'xxx'
+      registry: 'xxx'
+      region: 'asia-northeast1'
+
+  deploy-lambda:
+    if: ${{ github.event.inputs.deploy_to == 'lambda' }}
+    needs: test
+    name: '🚀 デプロイ'
+    uses: ./.github/workflows/_deploy-to-lambda.yml
+    with:
+      aws-access-key-id: 'xxx'
+      aws-secret-access-key: 'xxx'
+      registry: 'xxx'
+      region: 'ap-northeast-1'

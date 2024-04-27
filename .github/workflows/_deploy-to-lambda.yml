@@ -1,0 +1,54 @@
+name: _deploy-to-lambda
+
+on:
+  workflow_call:
+    inputs:
+      aws-access-key-id:
+        description: 'AWS Access Key ID'
+        type: string
+        required: true
+      aws-secret-access-key:
+        description: 'AWS Secret Access Key'
+        type: string
+        required: true
+      registry:
+        description: 'ECR Name'
+        type: string
+        required: true
+      region:
+        description: 'AWS region'
+        type: string
+        required: true
+        default: 'ap-northeast-1'
+
+env:
+  AWS_REGION: ${{ inputs.region }}
+  AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+  AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
+  DOCKER_IMAGE_NAME: ${{ inputs.registry }}
+  LAMBDA_FUNCTION_NAME: ${{ inputs.registry }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Push Docker Image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/${{ env.DOCKER_IMAGE_NAME }}:latest . -f ./Dockerfile.aws.lambda
+          docker push $ECR_REGISTRY/${{ env.DOCKER_IMAGE_NAME }}:latest
+      - name: Deploy Lambda
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: aws lambda update-function-code --function-name ${{ env.LAMBDA_FUNCTION_NAME }} --image-uri $ECR_REGISTRY/${{ env.DOCKER_IMAGE_NAME }}:latest

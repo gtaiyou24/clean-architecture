@@ -1,0 +1,71 @@
+name: _deploy-to-cloud-run
+
+on:
+  workflow_call:
+    inputs:
+      project-id:
+        description: 'Project ID'
+        type: string
+        required: true
+      workload-identity-provider:
+        description: 'Workload Identity プロバイダ'
+        type: string
+        required: true
+      service-account:
+        description: 'サービスアカウント'
+        type: string
+        required: true
+      registry:
+        description: 'GCR Name & Cloud Run Name'
+        type: string
+        required: true
+      region:
+        description: 'GCP region'
+        type: string
+        required: true
+        default: 'asia-northeast1'
+
+env:
+  PROJECT_ID: ${{ inputs.project-id }}
+  REGION: ${{ inputs.region }}
+  REPO_NAME: ${{ inputs.registry }}
+
+concurrency:
+  group: deploy-to-cloud-run
+  cancel-in-progress: true
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Authenticate with Google Cloud
+        id: "auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: ${{ github.event.inputs.workload-identity-provider }}
+          service_account: ${{ github.event.inputs.service-account }}
+
+      - name: Set up gcloud CLI/SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authorize Docker push
+        run: gcloud auth configure-docker
+
+      - name: Build and tag the docker image
+        run: |-
+          docker build . --tag gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
+
+      - name: Push the image to the Google Container Registry (GCR)
+        run: |-
+          docker push gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
+
+      - name: Deploy
+        run: |-
+          gcloud run deploy $REPO_NAME \
+          --region $REGION \
+          --image gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
+          --platform "managed" \
+          --port 8000 \
+          --allow-unauthenticated \
+          --quiet
