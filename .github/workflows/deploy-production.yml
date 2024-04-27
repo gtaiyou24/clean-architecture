@@ -50,9 +50,9 @@ jobs:
     with:
       project-id: ${{ vars.GCP_PROJECT_ID }}
       workload-identity-provider: ${{ vars.GCP_WIF_PROVIDER }}
-      service-account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT
+      service-account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
       registry: ${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}  # リポジトリ名
-      region: 'asia-northeast1' }}
+      region: 'asia-northeast1'
 
   deploy-lambda:
     if: ${{ github.event.inputs.deploy_to == 'lambda' }}
