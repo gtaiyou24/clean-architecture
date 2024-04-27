@@ -28,6 +28,7 @@ jobs:
 
   acceptance-test:
     runs-on: ubuntu-latest
+    needs: unit-test
     steps:
       - name: Run Acceptance Test
         run: |
