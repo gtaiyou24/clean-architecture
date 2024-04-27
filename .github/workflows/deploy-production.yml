@@ -49,9 +49,9 @@ jobs:
     name: '🚀 デプロイ'
     uses: ./.github/workflows/_deploy-to-cloud-run.yml
     with:
-      project-id: 'xxx'
-      workload-identity-provider: 'xxx'
-      service-account: 'xxx'
+      project-id: ${{ vars.GCP_PROJECT_ID }}
+      workload-identity-provider: ${{ secrets.GCP_WIF_PROVIDER }}
+      service-account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
       registry: 'xxx'
       region: 'asia-northeast1'
 
