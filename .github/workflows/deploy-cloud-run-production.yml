@@ -18,7 +18,7 @@ on:
         description: 'type deploy/production'
         required: true
 
-# ワークフローを同時に実行できないようにコンカレンシーを使用
+# 本番リリースワークフローを同時に実行できないようにコンカレンシーを使用
 concurrency: ${{ github.workflow }}
 
 jobs:
