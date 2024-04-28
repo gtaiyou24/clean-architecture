@@ -1,3 +1,4 @@
+# App
 fastapi==0.110.2
 uvicorn[standard]==0.29.0
 python-multipart==0.0.9
@@ -16,3 +17,6 @@ mysqlclient==2.2.4
 
 # Mail
 html2text==2024.2.26
+
+# Other
+requests==2.31.0
