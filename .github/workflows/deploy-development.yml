@@ -21,7 +21,7 @@ jobs:
     name: '✅ テスト'
     uses: ./.github/workflows/_test.yml
     with:
-      python-version: '3.11'
+      python-version: '3.12'
 
   deploy-cloud-run:
     if: ${{ github.event.inputs.deploy_to == 'cloud-run' }}

@@ -6,7 +6,7 @@ on:
       python-version:
         type: string
         required: false
-        default: '3.11'
+        default: '3.12'
 
 jobs:
   unit-test:
