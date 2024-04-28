@@ -3,24 +3,28 @@ This API template designed with DDD and Clean Architecture using FastAPI.
 
 With this template, I implemented a system that provides role-based secure access management service for users.
 
-<details><summary>📁Packages</summary>
-
+ - python 3.12
  - [fastapi](https://pypi.org/project/fastapi/)
  - [pytest](https://pypi.org/project/pytest/)
  - [SQLAlchemy](https://pypi.org/project/SQLAlchemy/)
-
-</details>
 
 ```bash
 git clone https://github.com/gtaiyou24/clean-architecture [your-system-name]
 ```
 
-## 🛠️Architecture
+## 🛠 Architecture
+### 🛠 Infra
+
+<img src="./doc/infra.png" height="400" alt="Infra">
+
+### 🛠 Application
 
 <img src="./doc/clean-architecture.png" height="250" alt="Clean Architecture">
 
 > refer : https://buildersbox.corp-sansan.com/entry/2019/07/10/110000
 
+
+<details><summary>📁directory</summary>
 
 ```
 app
@@ -37,6 +41,8 @@ app
         └── service
 ```
 
+</details>
+
 ## 📖How To
 ### 🏃 Start
 ```bash
@@ -49,7 +55,6 @@ docker-compose up --build
 
 ```bash
 pip install pytest pytest-env httpx
-
 pytest -v ./test
 ```
 
