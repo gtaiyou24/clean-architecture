@@ -70,23 +70,15 @@ jobs:
         run: |-
           docker push gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
 
-#      - name: デプロイ
-#        run: |-
-#          gcloud run deploy $REPO_NAME \
-#          --region $REGION \
-#          --image gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
-#          --platform "managed" \
-#          --port 8000 \
-#          --allow-unauthenticated \
-#          --quiet
-
       - name: デプロイ
-        id: 'deploy'
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          region: $REGION
-          service: $REPO_NAME
-          image: gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
+        run: |-
+          gcloud run deploy $REPO_NAME \
+          --region $REGION \
+          --image gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
+          --platform "managed" \
+          --port 8000 \
+          --allow-unauthenticated \
+          --quiet
 
 #      - name: 公開アクセスを許可する
 #        run: |-
