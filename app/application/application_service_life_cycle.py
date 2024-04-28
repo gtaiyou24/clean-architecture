@@ -1,4 +1,6 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import override
 
 from injector import singleton, inject
 
@@ -6,15 +8,12 @@ from application import UnitOfWork
 from domain.model import DomainEventSubscriber, DomainEvent, DomainEventPublisher
 
 
-class DomainEventSubscriberImpl(DomainEventSubscriber):
+class DomainEventSubscriberImpl(DomainEventSubscriber[DomainEvent]):
     event_store = []
 
+    @override
     def handle_event(self, domain_event: DomainEvent):
         self.event_store.append(domain_event)
-
-    def subscribed_to_event_type(self) -> type:
-        # 全てのドメインイベント
-        return DomainEvent.__class__
 
 
 @singleton
@@ -28,7 +27,7 @@ class ApplicationServiceLifeCycle:
             self.listen()
         self.__unit_of_work.start()
 
-    def fail(self, exception: Optional[Exception] = None) -> None:
+    def fail(self, exception: Exception | None = None) -> None:
         self.__unit_of_work.rollback()
         if exception is not None:
             raise exception
@@ -38,6 +37,4 @@ class ApplicationServiceLifeCycle:
 
     def listen(self):
         DomainEventPublisher.shared().reset()
-        DomainEventPublisher.shared().subscribe(
-            DomainEventSubscriberImpl[DomainEvent]()
-        )
+        DomainEventPublisher.shared().subscribe(DomainEventSubscriberImpl())

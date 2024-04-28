@@ -2,66 +2,50 @@ from __future__ import annotations
 
 import abc
 import threading
-from datetime import date
-from typing import Generic, TypeVar, List
-
-T = TypeVar("T")
+from datetime import datetime
 
 
 class DomainEvent(abc.ABC):
     """ドメインイベント"""
-
-    @abc.abstractmethod
-    def event_version(self) -> int:
-        pass
-
-    @abc.abstractmethod
-    def occurred_on(self) -> date:
-        pass
+    event_version: int
+    occurred_on: datetime
 
 
-class DomainEventPublisher(threading.Thread):
+class DomainEventPublisher(threading.local):
     """パブリッシャー"""
+    __instance: DomainEventPublisher | None = None
 
-    instance = threading.local()
+    def __init__(self):
+        self.__subscribers = set()
 
-    def __init__(self, subscribers: List[DomainEventSubscriber], is_publishing: bool):
-        super().__init__()
-        self.__subscribers = subscribers
-        self.__is_publishing = is_publishing
-        self.__instance = DomainEventPublisher.instance
+    @classmethod
+    def shared(cls) -> DomainEventPublisher:
+        if cls.__instance:
+            return cls.__instance
 
-    @staticmethod
-    def shared() -> DomainEventPublisher:
-        return DomainEventPublisher([], False)
+        cls.__instance = DomainEventPublisher()
+        return cls.__instance
 
-    def reset(self):
+    def reset(self) -> DomainEventPublisher:
         self.__subscribers = []
+        return self
 
-    def publish(self, domain_event: T):
-        if self.__is_publishing or not self.__subscribers:
-            return
+    def publish(self, domain_event: DomainEvent) -> None:
+        for subscriber in self.__subscribers:
+            # サブスクライブするクラスタイプを取得し、型をチェックする
+            if isinstance(domain_event, subscriber.subscribed_to_event_type()):
+                subscriber.handle_event(domain_event)
 
-        try:
-            self.__is_publishing = True
-            for subscriber in self.__subscribers:
-                # サブスクライブするクラスタイプを取得し、型をチェックする
-                if isinstance(domain_event, subscriber.subscribed_to_event_type()):
-                    subscriber.handle_event(domain_event)
-        finally:
-            self.__is_publishing = False
-
-    def subscribe(self, subscriber: DomainEventSubscriber):
-        self.__subscribers.append(subscriber)
+    def subscribe(self, subscriber: DomainEventSubscriber) -> None:
+        self.__subscribers.add(subscriber)
 
 
-class DomainEventSubscriber(abc.ABC, Generic[T]):
+class DomainEventSubscriber[T](abc.ABC):
     """サブスクライバー"""
 
     @abc.abstractmethod
-    def handle_event(self, domain_event: T):
+    def handle_event(self, domain_event: T) -> None:
         pass
 
-    @abc.abstractmethod
     def subscribed_to_event_type(self) -> type:
-        pass
+        return T.__class__
