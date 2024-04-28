@@ -30,8 +30,8 @@ gcloud services enable iamcredentials.googleapis.com \
 # サービスアカウントを作成
 gcloud iam service-accounts create "github-actions"\
  --project=${PROJECT_ID} \
- --display-name="github actions service account" \
- --description="github actions account deploy to GCP"
+ --display-name="GitHub Actions サービスアカウント" \
+ --description="GitHub Actions が GCP へアプリをデプロイするためのサービスアカウント"
 
 # サービスアカウントが作成できたか確認
 gcloud iam service-accounts list
@@ -39,16 +39,16 @@ gcloud iam service-accounts list
 
 サービス アカウントには、イメージを push し、Cloud Run サービス アカウントの権限を借用して Cloud Run をデプロイできるロールが必要とされます。以下のロールが必要です。
 ```bash
-gcloud projects add-iam-policy-binding ${プロジェクトID} \
- --member="serviceAccount:github-actions@${プロジェクトID}.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+ --member="serviceAccount:github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
  --role="roles/artifactregistry.writer"
 
-gcloud projects add-iam-policy-binding ${プロジェクトID} \
- --member="serviceAccount:github-actions@${プロジェクトID}.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+ --member="serviceAccount:github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
  --role="roles/run.developer"
 
-gcloud projects add-iam-policy-binding ${プロジェクトID} \
- --member="serviceAccount:github-actions@${プロジェクトID}.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+ --member="serviceAccount:github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
  --role="roles/iam.serviceAccountUser"
 ```
 
@@ -57,17 +57,17 @@ gcloud projects add-iam-policy-binding ${プロジェクトID} \
 GitHub Actions 経由で Cloud Run へデプロイするには、 Workload Identity プールと Workload Identity プロバイダを作成して Workload Identity 連携を設定および構成する必要があります。
 ```bash
 # Workload Identity プールを作成
-gcloud iam workload-identity-pools create "cicd-pool" \
+gcloud iam workload-identity-pools create "github-actions-pool" \
   --project="${PROJECT_ID}" \
   --location="global" \
-  --display-name="CI/CD pool"
+  --display-name="GitHub Actions プール"
 
 # Workload Identity プロバイダを作成
-gcloud iam workload-identity-pools providers create-oidc "cicd-provider" \
+gcloud iam workload-identity-pools providers create-oidc "github-actions-provider" \
   --project="${PROJECT_ID}" \
   --location="global" \
-  --workload-identity-pool="cicd-pool" \
-  --display-name="CI/CD provider" \
+  --workload-identity-pool="github-actions-pool" \
+  --display-name="GitHub Actions Provider" \
   --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.actor=assertion.actor" \
   --issuer-uri="https://token.actions.githubusercontent.com"
 ```
@@ -78,11 +78,10 @@ gcloud iam workload-identity-pools providers create-oidc "cicd-provider" \
 gcloud iam service-accounts add-iam-policy-binding "github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
   --project="${PROJECT_ID}" \
   --role="roles/iam.workloadIdentityUser" \
-  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/cicd-pool/attribute.repository/gtaiyou24/clean-architecture"
+  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-actions-pool/attribute.repository/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}"
 ```
 
 シークレット情報
-
 | Secret | Description | Example |
 |:------:|:------------|:--------|
 | `GCP_WIF_PROVIDER` | Workload Identity プロバイダ | `projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/<プールID>/providers/<プロバイダID>` |
