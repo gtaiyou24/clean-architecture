@@ -45,7 +45,7 @@ async def lifespan(app: FastAPI):
     yield
     # 終了後
 
-app = FastAPI(title='Identity Access', root_path=os.getenv('OPENAPI_PREFIX'), lifespan=lifespan)
+app = FastAPI(title='clean-architecture', root_path=os.getenv('OPENAPI_PREFIX'), lifespan=lifespan)
 
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 

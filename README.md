@@ -9,7 +9,12 @@ With this template, I implemented a system that provides role-based secure acces
  - [SQLAlchemy](https://pypi.org/project/SQLAlchemy/)
 
 ```bash
-git clone https://github.com/gtaiyou24/clean-architecture [your-system-name]
+git clone https://github.com/gtaiyou24/clean-architecture $YOUR_SYSTEM_NAME
+
+# replace 'clean-architecture' to your system name
+grep -l 'clean-architecture' .github/workflows/* | xargs sed -i "s/clean-architecture/${YOUR_SYSTEM_NAME}/g"
+sed -i "s/clean-architecture/${YOUR_SYSTEM_NAME}/g" app/app.py
+sed -i "s/clean-architecture/${YOUR_SYSTEM_NAME}/g" docker-compose.yaml
 ```
 
 ## 🛠 Architecture
