@@ -46,6 +46,7 @@ jobs:
       workload-identity-provider: ${{ vars.GCP_WIF_PROVIDER }}
       service-account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
       registry: 'clean-architecture'
+      cloud-run-name: 'clean-architecture'
       region: 'asia-northeast1'
 
   deploy-lambda:

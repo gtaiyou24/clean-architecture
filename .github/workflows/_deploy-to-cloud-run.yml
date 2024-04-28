@@ -16,7 +16,11 @@ on:
         type: string
         required: true
       registry:
-        description: 'GCR Name & Cloud Run Name'
+        description: 'GCR Name'
+        type: string
+        required: true
+      cloud-run-name:
+        description: 'Cloud Run Name'
         type: string
         required: true
       region:
@@ -29,8 +33,9 @@ env:
   PROJECT_ID: ${{ inputs.project-id }}
   WIF_PROVIDER: ${{ inputs.workload-identity-provider }}
   WIF_SERVICE_ACCOUNT: ${{ inputs.service-account }}
-  REGION: ${{ inputs.region }}
   REPO_NAME: ${{ inputs.registry }}
+  CLOUD_RUN_NAME: ${{ inputs.cloud-run-name }}
+  REGION: ${{ inputs.region }}
 
 concurrency:
   group: deploy-to-cloud-run-${{ inputs.registry }}
@@ -72,7 +77,7 @@ jobs:
 
       - name: デプロイ
         run: |-
-          gcloud run deploy $REPO_NAME \
+          gcloud run deploy $CLOUD_RUN_NAME \
           --region $REGION \
           --image gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
           --platform "managed" \
