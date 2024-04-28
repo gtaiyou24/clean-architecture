@@ -3,6 +3,7 @@ from __future__ import annotations
 import abc
 import threading
 from datetime import datetime
+from typing import Self
 
 
 class DomainEvent(abc.ABC):
@@ -26,7 +27,7 @@ class DomainEventPublisher(threading.local):
         cls.__instance = DomainEventPublisher()
         return cls.__instance
 
-    def reset(self) -> DomainEventPublisher:
+    def reset(self) -> Self:
         self.__subscribers = []
         return self
 
@@ -47,5 +48,5 @@ class DomainEventSubscriber[T](abc.ABC):
     def handle_event(self, domain_event: T) -> None:
         pass
 
-    def subscribed_to_event_type(self) -> type:
+    def subscribed_to_event_type(self) -> type[T]:
         return T.__class__
