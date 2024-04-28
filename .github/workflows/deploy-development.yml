@@ -1,0 +1,48 @@
+name: "🚀 Deploy: Development"
+run-name: 📌  <${{ inputs.deploy_to }}> 開発環境へ ${{ github.ref_name }} をデプロイ 🚀
+
+on:
+  # 手動トリガー
+  workflow_dispatch:
+    inputs:
+      deploy_to:
+        type: choice
+        description: Deploy to
+        default: cloud-run
+        options:
+          - cloud-run
+          - lambda
+
+# 本番リリースワークフローを同時に実行できないようにコンカレンシーを使用
+concurrency: ${{ github.workflow }}
+
+jobs:
+  test:
+    name: '✅ テスト'
+    uses: ./.github/workflows/_test.yml
+    with:
+      python-version: '3.11'
+
+  deploy-cloud-run:
+    if: ${{ github.event.inputs.deploy_to == 'cloud-run' }}
+    needs: test
+    name: '🚀 デプロイ'
+    uses: ./.github/workflows/_deploy-to-cloud-run.yml
+    with:
+      project-id: ${{ vars.GCP_PROJECT_ID }}
+      workload-identity-provider: ${{ vars.GCP_WIF_PROVIDER }}
+      service-account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+      registry: 'clean-architecture'
+      cloud-run-name: 'clean-architecture-development'
+      region: 'asia-northeast1'
+
+  deploy-lambda:
+    if: ${{ github.event.inputs.deploy_to == 'lambda' }}
+    needs: test
+    name: '🚀 デプロイ'
+    uses: ./.github/workflows/_deploy-to-lambda.yml
+    with:
+      aws-access-key-id: 'xxx'
+      aws-secret-access-key: 'xxx'
+      registry: 'xxx'
+      region: 'ap-northeast-1'
