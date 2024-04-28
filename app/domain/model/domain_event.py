@@ -17,7 +17,7 @@ class DomainEventPublisher(threading.local):
     __instance: DomainEventPublisher | None = None
 
     def __init__(self):
-        self.__subscribers = set()
+        self.__subscribers: set[DomainEventSubscriber] = set()
 
     @classmethod
     def shared(cls) -> DomainEventPublisher:
@@ -28,7 +28,7 @@ class DomainEventPublisher(threading.local):
         return cls.__instance
 
     def reset(self) -> Self:
-        self.__subscribers = []
+        self.__subscribers = set()
         return self
 
     def publish(self, domain_event: DomainEvent) -> None:
