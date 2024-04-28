@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from domain.model.user import UserRepository, User, EmailAddress
+from domain.model.mail import EmailAddress
+from domain.model.user import UserRepository, User
 
 
 class InMemUserRepository(UserRepository):

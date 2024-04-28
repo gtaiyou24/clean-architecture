@@ -15,8 +15,8 @@ class Token:
         VERIFICATION = ('検証トークン', 30)
         PASSWORD_RESET = ('パスワードリセットトークン', 10)
 
-        def __init__(self, name: str, expiration_minutes: int):
-            self.name = name
+        def __init__(self, type: str, expiration_minutes: int):
+            self.type = type
             self.expiration_minutes = expiration_minutes
 
         def generate(self) -> Token:
