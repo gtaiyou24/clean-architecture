@@ -44,7 +44,9 @@ class AuthResource(APIResource):
     def token(self, request: OAuth2PasswordRequest) -> Token:
         self.__identity_application_service = self.__identity_application_service or \
                                               DIContainer.instance().resolve(IdentityApplicationService)
-        dpo = self.__identity_application_service.authenticate_user(AuthenticateUserCommand(request.email_address, request.password))
+        dpo = self.__identity_application_service.authenticate_user(
+            AuthenticateUserCommand(request.email_address, request.password)
+        )
         return Token.generate(dpo)
 
     def refresh(self, current_user: UserDpo = Depends(get_current_active_user)) -> Token:

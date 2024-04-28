@@ -19,4 +19,3 @@ def transactional(method, is_listening: bool = True):
             application_life_cycle.fail(e)
 
     return handle_transaction
-

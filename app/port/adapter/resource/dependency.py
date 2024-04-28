@@ -1,11 +1,13 @@
 from di import DIContainer
 from fastapi import HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 
 from application.identity import IdentityApplicationService
 from application.identity.dpo import UserDpo
+from port.adapter.resource.jwt import JWTEncoder
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> UserDpo:
