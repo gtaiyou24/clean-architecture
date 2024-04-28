@@ -10,14 +10,19 @@ from starlette.responses import JSONResponse
 
 from application import UnitOfWork
 from domain.model.mail import MailDeliveryService
+from domain.model.user import UserRepository, EncryptionService
 from exception import SystemException
-from port.adapter.persistence.repository.inmem import InMemUnitOfWork
+from port.adapter.persistence.repository.inmem import InMemUnitOfWork, InMemUserRepository
 from port.adapter.persistence.repository.mysql import MySQLUnitOfWork, DataBase
+from port.adapter.resource.auth import AuthResource
+from port.adapter.resource.auth.github import GitHubResource
 from port.adapter.resource.health import HealthResource
+from port.adapter.resource.user import UserResource
 from port.adapter.service.mail.adapter import MailDeliveryAdapter
 from port.adapter.service.mail.adapter.mailhog import MailHogAdapter
 from port.adapter.service.mail.adapter.sendgrid import SendGridAdapter
 from port.adapter.service.mail.mail_delivery_service_impl import MailDeliveryServiceImpl
+from port.adapter.service.user import EncryptionServiceImpl
 
 
 @asynccontextmanager
@@ -25,6 +30,8 @@ async def lifespan(app: FastAPI):
     """API 起動前と終了後に実行する処理を記載する"""
     DI_LIST = [
         DI.of(UnitOfWork, {'MySQL': MySQLUnitOfWork}, InMemUnitOfWork),
+        DI.of(UserRepository, {}, InMemUserRepository),
+        DI.of(EncryptionService, {}, EncryptionServiceImpl),
         DI.of(MailDeliveryService, {}, MailDeliveryServiceImpl),
         DI.of(MailDeliveryAdapter, {'SendGrid': SendGridAdapter}, MailHogAdapter),
     ]
@@ -43,6 +50,9 @@ app = FastAPI(title='Identity Access', root_path=os.getenv('OPENAPI_PREFIX'), li
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 app.include_router(HealthResource().router)
+app.include_router(UserResource().router)
+app.include_router(AuthResource().router)
+app.include_router(GitHubResource(os.getenv('GITHUB_CLIENT_ID'), os.getenv('GITHUB_CLIENT_SECRET')).router)
 
 
 @app.exception_handler(SystemException)

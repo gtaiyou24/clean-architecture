@@ -1,1 +1,2 @@
 from .in_mem_unit_of_work import InMemUnitOfWork
+from .in_mem_user_repository import InMemUserRepository

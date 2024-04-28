@@ -1,0 +1,5 @@
+from .forgot_password_request import ForgotPasswordRequest
+from .oauth2_password_request import OAuth2PasswordRequest
+from .register_user_request import RegisterUserRequest
+from .reset_password_request import ResetPasswordRequest
+from .verify_request import VerifyRequest
