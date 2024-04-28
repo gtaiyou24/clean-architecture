@@ -1,9 +1,9 @@
 name: "🎯 Pushed"
 
 on:
-  push:
+  push:  # プッシュに反応
     branches:
-      - '*'
+      - '*'  # 全ブランチへのpushに反応
   pull_request:  # プルリクエストに反応
     types: [opened, synchronize]  # プルリクエストがオープン、更新された場合にトリガー
 
@@ -14,15 +14,8 @@ jobs:
     with:
       python-version: '3.11'
 
-  check-lint:
-    name: '✅ リントチェック'
-    uses: ./.github/workflows/_lint-check.yml
+  check-code:
+    name: '✅ コードチェック'
+    uses: ./.github/workflows/_check-code.yml
     with:
       python-version: '3.11'
-
-  check-format:
-    name: '✅ フォーマットチェック'
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "WIP"

@@ -9,7 +9,7 @@ on:
         default: '3.11'
 
 jobs:
-  check:
+  lint-check:
     runs-on: ubuntu-latest
     name: "リントチェック"
     steps:
@@ -28,3 +28,19 @@ jobs:
             --max-line-length 120 \
             --per-file-ignores __init__.py:F401,E402 \
             --statistics
+
+  format-check:
+    runs-on: ubuntu-latest
+    name: "フォーマットチェック"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Format Check With black
+        run: |
+          pip install black
