@@ -15,8 +15,9 @@ def transactional(method, is_listening: bool = True):
 
         try:
             application_life_cycle.begin(is_listening)
-            method(*args, **kwargs)
+            _return = method(*args, **kwargs)
             application_life_cycle.success()
+            return _return
         except Exception as e:
             application_life_cycle.fail(e)
 

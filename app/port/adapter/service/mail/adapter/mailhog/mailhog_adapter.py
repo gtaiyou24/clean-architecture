@@ -23,4 +23,4 @@ class MailHogAdapter(MailDeliveryAdapter):
         mail.attach(MIMEText(html2text(html), "plain"))
         mail.attach(MIMEText(html, "html"))
 
-        self.__smtp.sendmail(self._FROM, to.address, mail.as_string())
+        self.__smtp.sendmail(self._FROM, to.value, mail.as_string())

@@ -10,4 +10,4 @@ class UserDescriptorJson(BaseModel):
 
     @staticmethod
     def from_(dpo: UserDpo) -> UserDescriptorJson:
-        return UserDescriptorJson(email_address=dpo.user.email_address.address)
+        return UserDescriptorJson(email_address=dpo.user.email_address.value)
