@@ -1,5 +1,6 @@
 # Clean Architecture
-This API template designed with DDD and Clean Architecture using FastAPI. 
+This API template designed with DDD and Clean Architecture using FastAPI.
+
 With this template, I implemented a system that provides role-based secure access management service for users.
 
 <details><summary>📁Packages</summary>
