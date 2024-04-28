@@ -54,23 +54,23 @@ jobs:
       - name: Set up gcloud CLI/SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Authorize Docker push
+      - name: Docker 認証
         run: gcloud auth configure-docker
 
       # 無料枠を超過しないように古いDockerイメージを削除
-      - name: Delete old docker images
+      - name: 古い Docker イメージを削除
         continue-on-error: true  # 初回はDockerイメージがなくエラーになるため、エラーを無視する
         run: gcloud artifacts docker images delete gcr.io/$PROJECT_ID/$REPO_NAME --quiet
 
-      - name: Build and tag the docker image
+      - name: Docker イメージをビルド
         run: |-
           docker build . --tag gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
 
-      - name: Push the image to the Google Container Registry (GCR)
+      - name: Docker イメージを GCR にプッシュ
         run: |-
           docker push gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
 
-      - name: Deploy
+      - name: デプロイ
         run: |-
           gcloud run deploy $REPO_NAME \
           --region $REGION \
@@ -80,6 +80,7 @@ jobs:
           --allow-unauthenticated \
           --quiet
 
+      - name: 公開アクセスを許可する
           gcloud run services add-iam-policy-binding $REPO_NAME \
           --region=$REGION \
           --member=allUsers \
