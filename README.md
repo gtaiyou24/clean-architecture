@@ -1,5 +1,6 @@
 # FastAPI × DDD × Clean Architecture
-API template designed with DDD and Clean Architecture using FastAPI
+This API template designed with DDD and Clean Architecture using FastAPI. 
+With this template, I implemented a system that provides role-based secure access management service for users.
 
 <details><summary>📁Packages</summary>
 
@@ -22,7 +23,6 @@ git clone https://github.com/gtaiyou24/clean-architecture [your-system-name]
 
 ```
 app
-├── app.py
 ├── application  # application layer
 ├── domain
 │   └── model  # domain layer
@@ -37,14 +37,14 @@ app
 ```
 
 ## 📖How To
-### 🏃Start
+### 🏃 Start
 ```bash
 docker-compose up --build
 ```
+ - [Swagger UI](http://localhost:8000/docs)
+ - [MailHog](http://0.0.0.0:8025/)
 
-open [localhost:8000/docs](http://localhost:8000/docs)
-
-### ✅Test
+### ✅ Test
 
 ```bash
 pip install pytest pytest-env httpx
@@ -55,3 +55,4 @@ pytest -v ./test
 ## 🔗Appendix
 
  - [VaughnVernon/IDDD_Samples - github.com](https://github.com/VaughnVernon/IDDD_Samples)
+ - [hafizn07/next-auth-v5-advanced-guide-2024 - github.com](https://github.com/hafizn07/next-auth-v5-advanced-guide-2024)
