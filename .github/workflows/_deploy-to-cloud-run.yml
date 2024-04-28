@@ -43,6 +43,7 @@ concurrency:
 
 jobs:
   build-and-push:
+    name: '🚀 Cloud Run をデプロイ'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
