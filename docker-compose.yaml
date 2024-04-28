@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: identity-access
+    container_name: clean-architecture
     env_file:
       - .env.local
     ports:
@@ -22,18 +22,18 @@ services:
   mysql:
     image: mysql:8.0
     platform: linux/x86_64
-    container_name: identity-access-mysql
+    container_name: clean-architecture-mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
-      - MYSQL_DATABASE=finance
+      - MYSQL_DATABASE=clean-architecture
       - TZ=Asia/Tokyo
     ports:
       - "3306:3306"
     volumes:
       - ./infrastructure/mysql/conf.d:/etc/mysql/conf.d
-      - identity-access-mysql-volume:/var/lib/mysql
+      - clean-architecture-mysql-volume:/var/lib/mysql
     tty: true
     healthcheck:
       # MySQL が起動しているか確認するための設定
@@ -46,10 +46,10 @@ services:
   # Mail Server
   mailhog:
     image: mailhog/mailhog
-    container_name: identity-access-mailhog
+    container_name: clean-architecture-mailhog
     ports:
       - "8025:8025"
 
 volumes:
-  identity-access-mysql-volume:
+  clean-architecture-mysql-volume:
     driver: 'local'
