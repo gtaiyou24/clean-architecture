@@ -1,9 +1,8 @@
-from __future__ import annotations
-
 import enum
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from typing import Self
 
 
 @dataclass(init=True, frozen=True)
@@ -20,7 +19,7 @@ class Token:
             self.type = type
             self.expiration_minutes = expiration_minutes
 
-        def generate(self) -> Token:
+        def generate(self) -> Self:
             return Token(
                 self,
                 str(uuid.uuid4()),

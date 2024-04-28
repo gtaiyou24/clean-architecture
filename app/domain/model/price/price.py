@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import Enum
+from typing import Self
 
 from domain.model.price import Amount
 
@@ -24,8 +25,8 @@ class Price:
     amount: Amount
     currency: Currency
 
-    def add(self, other: Price) -> Price:
+    def add(self, other: Self) -> Self:
         return Price(self.amount.add(other.amount), self.currency)
 
-    def sub(self, other: Price) -> Price:
+    def sub(self, other: Self) -> Self:
         return Price(self.amount.sub(other.amount), self.currency)
