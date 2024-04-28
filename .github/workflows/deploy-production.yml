@@ -15,11 +15,6 @@ on:
       approval:
         description: 'type deploy/production'
         required: true
-      run_test:
-        type: boolean
-        description: 'run test'
-        default: true
-        required: true
 
 # 本番リリースワークフローを同時に実行できないようにコンカレンシーを使用
 concurrency: ${{ github.workflow }}
@@ -35,7 +30,6 @@ jobs:
         run: echo '::error ::`branch` は `main` を指定してください'; exit 1
 
   test:
-    if: ${{ github.event.inputs.run_test }}
     needs: check-input
     name: '✅ テスト'
     uses: ./.github/workflows/_test.yml
