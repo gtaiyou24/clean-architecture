@@ -37,6 +37,21 @@ gcloud iam service-accounts create "github-actions"\
 gcloud iam service-accounts list
 ```
 
+サービス アカウントには、イメージを push し、Cloud Run サービス アカウントの権限を借用して Cloud Run をデプロイできるロールが必要とされます。以下のロールが必要です。
+```bash
+gcloud projects add-iam-policy-binding ${プロジェクトID} \
+ --member="serviceAccount:github-actions@${プロジェクトID}.iam.gserviceaccount.com" \
+ --role="roles/artifactregistry.writer"
+
+gcloud projects add-iam-policy-binding ${プロジェクトID} \
+ --member="serviceAccount:github-actions@${プロジェクトID}.iam.gserviceaccount.com" \
+ --role="roles/run.developer"
+
+gcloud projects add-iam-policy-binding ${プロジェクトID} \
+ --member="serviceAccount:github-actions@${プロジェクトID}.iam.gserviceaccount.com" \
+ --role="roles/iam.serviceAccountUser"
+```
+
 **3. Workload Identity プール・プロバイダを作成する**
 
 GitHub Actions 経由で Cloud Run へデプロイするには、 Workload Identity プールと Workload Identity プロバイダを作成して Workload Identity 連携を設定および構成する必要があります。

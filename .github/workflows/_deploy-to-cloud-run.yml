@@ -59,7 +59,7 @@ jobs:
 
       # 無料枠を超過しないように古いDockerイメージを削除
       - name: Delete old docker images
-        continue-on-error: true
+        continue-on-error: true  # 初回はDockerイメージがなくエラーになるため、エラーを無視する
         run: gcloud artifacts docker images delete gcr.io/$PROJECT_ID/$REPO_NAME --quiet
 
       - name: Build and tag the docker image

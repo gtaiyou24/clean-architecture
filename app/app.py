@@ -29,7 +29,7 @@ async def lifespan(app: FastAPI):
         DI.of(MailDeliveryAdapter, {'SendGrid': SendGridAdapter}, MailHogAdapter),
     ]
 
-    if 'MySQL' in os.getenv('DI_PROFILE_ACTIVES'):
+    if 'MySQL' in os.getenv('DI_PROFILE_ACTIVES', []):
         engine: Engine = create_engine(os.getenv('DATABASE_URL'), echo=os.getenv('LOG_LEVEL', 'DEBUG') == 'DEBUG')
         DI_LIST.append(DI.of(Engine, {}, engine))
         DataBase.metadata.create_all(bind=engine)
