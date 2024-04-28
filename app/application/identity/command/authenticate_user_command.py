@@ -14,9 +14,11 @@ class AuthenticateUserCommand:
 
     @staticmethod
     def github(user: dict, emails: list[dict]) -> AuthenticateUserCommand:
-        default_email = user['email'] or emails[0]['email']
+        default_email = user["email"] or emails[0]["email"]
         primary_email = None
         for e in emails:
-            if e['primary']:
-                primary_email = e['email']
-        return AuthenticateUserCommand(email_address=primary_email or default_email, password=None)
+            if e["primary"]:
+                primary_email = e["email"]
+        return AuthenticateUserCommand(
+            email_address=primary_email or default_email, password=None
+        )

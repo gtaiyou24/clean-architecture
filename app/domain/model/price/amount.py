@@ -7,6 +7,7 @@ from decimal import Decimal
 @dataclass(init=True, unsafe_hash=True, frozen=True)
 class Amount:
     """通貨の量"""
+
     value: Decimal
 
     def add(self, other: Amount) -> Amount:

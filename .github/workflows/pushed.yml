@@ -19,3 +19,4 @@ jobs:
     uses: ./.github/workflows/_check-code.yml
     with:
       python-version: '3.11'
+      allow-autocommit: false

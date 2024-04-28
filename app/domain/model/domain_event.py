@@ -5,7 +5,7 @@ import threading
 from datetime import date
 from typing import Generic, TypeVar, List
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class DomainEvent(abc.ABC):
@@ -22,6 +22,7 @@ class DomainEvent(abc.ABC):
 
 class DomainEventPublisher(threading.Thread):
     """パブリッシャー"""
+
     instance = threading.local()
 
     def __init__(self, subscribers: List[DomainEventSubscriber], is_publishing: bool):
@@ -56,6 +57,7 @@ class DomainEventPublisher(threading.Thread):
 
 class DomainEventSubscriber(abc.ABC, Generic[T]):
     """サブスクライバー"""
+
     @abc.abstractmethod
     def handle_event(self, domain_event: T):
         pass

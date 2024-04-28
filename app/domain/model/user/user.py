@@ -16,12 +16,14 @@ class User:
     _enable: bool
     _verified_at: datetime | None
 
-    def __init__(self,
-                 email_address: EmailAddress,
-                 encrypted_password: str | None,
-                 tokens: set[Token],
-                 verified_at: datetime | None,
-                 enable: bool):
+    def __init__(
+        self,
+        email_address: EmailAddress,
+        encrypted_password: str | None,
+        tokens: set[Token],
+        verified_at: datetime | None,
+        enable: bool,
+    ):
         """
         :param email_address:
         :param encrypted_password: 暗号化されたパスワード。OAuth2認証で登録されたユーザーは None になる。
@@ -47,10 +49,14 @@ class User:
     def registered(email_address: EmailAddress, plain_password: str | None) -> User:
         return User(
             email_address,
-            DomainRegistry.resolve(EncryptionService).encrypt(plain_password) if plain_password else None,
+            (
+                DomainRegistry.resolve(EncryptionService).encrypt(plain_password)
+                if plain_password
+                else None
+            ),
             set(),
             None,
-            False
+            False,
         )
 
     @property
@@ -72,13 +78,17 @@ class User:
     def verify_password(self, plain_password: str) -> bool:
         if self.encrypted_password is None:
             return False
-        return DomainRegistry.resolve(EncryptionService).verify(plain_password, self.encrypted_password)
+        return DomainRegistry.resolve(EncryptionService).verify(
+            plain_password, self.encrypted_password
+        )
 
     def protect_password(self, plain_password) -> None:
-        self._encrypted_password = DomainRegistry.resolve(EncryptionService).encrypt(plain_password)
+        self._encrypted_password = DomainRegistry.resolve(EncryptionService).encrypt(
+            plain_password
+        )
 
     def reset_password(self, new_plain_password: str, reset_token: str) -> None:
-        assert self.token_with(reset_token), 'パスワードのリセットトークンが不正です。'
+        assert self.token_with(reset_token), "パスワードのリセットトークンが不正です。"
 
         self.protect_password(new_plain_password)
         for token in self.tokens_of(Token.Name.PASSWORD_RESET):

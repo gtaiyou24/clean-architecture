@@ -11,6 +11,7 @@ from port.adapter.persistence.repository.mysql.user import DriverManagerUser
 @singleton
 class CacheLayerUser:
     """キャッシュを保持するクラス"""
+
     # 60秒 × 15分
     __TTL = 60 * 15
 

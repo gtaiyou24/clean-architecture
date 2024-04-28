@@ -30,7 +30,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> UserDpo:
     return dpo
 
 
-async def get_current_active_user(current_user: UserDpo = Depends(get_current_user)) -> UserDpo:
+async def get_current_active_user(
+    current_user: UserDpo = Depends(get_current_user),
+) -> UserDpo:
     if current_user.user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

@@ -11,4 +11,4 @@ class Test_ヘルスチェックAPI:
     def test_ヘルスチェックが確認できる(self):
         r: Response = self.client.get("/health/check")
         assert r.status_code == 200
-        assert r.json() == {'health': True}
+        assert r.json() == {"health": True}

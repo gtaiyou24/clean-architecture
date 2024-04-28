@@ -10,7 +10,7 @@ class EnumType(TypeDecorator):
     cache_ok = True
 
     def __init__(self, *args, **kwargs):
-        self.enum_class = kwargs.pop('enum_class')
+        self.enum_class = kwargs.pop("enum_class")
         TypeDecorator.__init__(self, *args, **kwargs)
 
     def process_bind_param(self, value, dialect):

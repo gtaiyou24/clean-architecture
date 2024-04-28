@@ -7,6 +7,10 @@ on:
         type: string
         required: false
         default: '3.11'
+      allow-autocommit:
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   lint-check:
@@ -17,21 +21,31 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ inputs.python-version }}
-      - name: Lint Check With flake8
+
+      - name: Install Packages
+        run: pip install flake8 mypy
+
+      - name: '論理エラー・PEP8スタイルなどのチェック'
         run: |
-          pip install flake8
           flake8 \
             --max-line-length 120 \
             --per-file-ignores __init__.py:F401,E402 \
             --statistics
 
+      - name: '型ヒントに基づいた型チェック'
+        run: |
+          echo "WIP: mypy"
+
   format-check:
     runs-on: ubuntu-latest
     name: "フォーマットチェック"
+    permissions:
+      contents: write # コンテンツに対する書き込み権限を設定
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,6 +55,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ inputs.python-version }}
-      - name: Format Check With black
-        run: |
-          pip install black
+      - name: Install packages
+        run: pip install black isort autoflake
+      - name: '未使用の変数/モジュールを削除'
+        run: autoflake -r .
+      - name: 'PEP8に従ったスタイルフォーマット'
+        run: black .
+      - name: 'モジュールのインポート順のフォーマット'
+        run: isort .
+      - name: '自動コミット'
+        if: ${{ github.event.inputs.allow-autocommit }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Apply Code Formatter # コミットメッセージを指定

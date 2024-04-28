@@ -38,4 +38,6 @@ class ApplicationServiceLifeCycle:
 
     def listen(self):
         DomainEventPublisher.shared().reset()
-        DomainEventPublisher.shared().subscribe(DomainEventSubscriberImpl[DomainEvent]())
+        DomainEventPublisher.shared().subscribe(
+            DomainEventSubscriberImpl[DomainEvent]()
+        )

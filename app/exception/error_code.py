@@ -9,13 +9,14 @@ from slf4py import set_logger
 
 @set_logger
 class ErrorLevel(Enum):
-    WARN = 'WARN'
-    ERROR = 'ERROR'
-    CRITICAL = 'CRITICAL'
+    WARN = "WARN"
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
 
     def to_logger(self, error_code: ErrorCode, detail: str):
         msg = "[Code] {code} [Message] {message} [Detail] {detail}".format(
-            code=error_code.name, message=error_code.message, detail=detail)
+            code=error_code.name, message=error_code.message, detail=detail
+        )
         if self == ErrorLevel.WARN:
             self.log.warning(msg)
         elif self == ErrorLevel.ERROR:
@@ -27,12 +28,32 @@ class ErrorLevel(Enum):
 
 
 class ErrorCode(Enum):
-    LOGIN_BAD_CREDENTIALS = ('メールアドレスまたはパスワードが間違っています', ErrorLevel.WARN, HTTPStatus.UNAUTHORIZED)
-    USER_DOES_NOT_EXISTS = ('該当ユーザーが見つかりません。', ErrorLevel.WARN, HTTPStatus.NOT_FOUND)
-    REGISTER_USER_ALREADY_EXISTS = ('該当メールアドレスですでにユーザー登録されています', ErrorLevel.WARN, HTTPStatus.BAD_REQUEST)
-    VALID_TOKEN_DOES_NOT_EXISTS = ('トークンが見つからない、もしくはすでに有効期限を過ぎています', ErrorLevel.ERROR, HTTPStatus.BAD_REQUEST)
-    COMMON_2001 = ('アクセス拒否', ErrorLevel.WARN, HTTPStatus.FORBIDDEN)
-    COMMON_2011 = ('該当ユーザーが見つかりません', ErrorLevel.WARN, HTTPStatus.NOT_FOUND)
+    LOGIN_BAD_CREDENTIALS = (
+        "メールアドレスまたはパスワードが間違っています",
+        ErrorLevel.WARN,
+        HTTPStatus.UNAUTHORIZED,
+    )
+    USER_DOES_NOT_EXISTS = (
+        "該当ユーザーが見つかりません。",
+        ErrorLevel.WARN,
+        HTTPStatus.NOT_FOUND,
+    )
+    REGISTER_USER_ALREADY_EXISTS = (
+        "該当メールアドレスですでにユーザー登録されています",
+        ErrorLevel.WARN,
+        HTTPStatus.BAD_REQUEST,
+    )
+    VALID_TOKEN_DOES_NOT_EXISTS = (
+        "トークンが見つからない、もしくはすでに有効期限を過ぎています",
+        ErrorLevel.ERROR,
+        HTTPStatus.BAD_REQUEST,
+    )
+    COMMON_2001 = ("アクセス拒否", ErrorLevel.WARN, HTTPStatus.FORBIDDEN)
+    COMMON_2011 = (
+        "該当ユーザーが見つかりません",
+        ErrorLevel.WARN,
+        HTTPStatus.NOT_FOUND,
+    )
 
     def __init__(self, message: str, error_level: ErrorLevel, http_status: HTTPStatus):
         self.message = message

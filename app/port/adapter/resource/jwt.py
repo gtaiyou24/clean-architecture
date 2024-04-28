@@ -6,15 +6,19 @@ from jose import jwt
 
 
 class JWTEncoder:
-    ALGORITHM = 'HS256'
+    ALGORITHM = "HS256"
 
     @staticmethod
     def encode(payload: dict) -> str:
-        return jwt.encode(payload, os.getenv('JWT_SECRET_KEY'), algorithm=JWTEncoder.ALGORITHM)
+        return jwt.encode(
+            payload, os.getenv("JWT_SECRET_KEY"), algorithm=JWTEncoder.ALGORITHM
+        )
 
     @staticmethod
     def decode(token: str) -> dict:
-        payload = jwt.decode(token, os.getenv('JWT_SECRET_KEY'), algorithms=[JWTEncoder.ALGORITHM])
+        payload = jwt.decode(
+            token, os.getenv("JWT_SECRET_KEY"), algorithms=[JWTEncoder.ALGORITHM]
+        )
         return payload
 
 
@@ -23,12 +27,18 @@ class JWTBearer(HTTPBearer):
         super(JWTBearer, self).__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request):
-        credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
+        credentials: HTTPAuthorizationCredentials = await super(
+            JWTBearer, self
+        ).__call__(request)
         if credentials:
             if not credentials.scheme == "Bearer":
-                raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
+                raise HTTPException(
+                    status_code=403, detail="Invalid authentication scheme."
+                )
             if not JWTEncoder.decode(credentials.credentials):
-                raise HTTPException(status_code=403, detail="Invalid token or expired token.")
+                raise HTTPException(
+                    status_code=403, detail="Invalid token or expired token."
+                )
             return credentials.credentials
         else:
             raise HTTPException(status_code=403, detail="Invalid authorization code.")
