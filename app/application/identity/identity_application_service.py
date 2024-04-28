@@ -4,7 +4,7 @@ import os
 
 from injector import singleton, inject
 
-from application import ApplicationServiceLifeCycle
+from application import transactional
 from application.identity.command import RegisterUserCommand, AuthenticateUserCommand, \
     ForgotPasswordCommand, ResetPasswordCommand
 from application.identity.dpo import UserDpo
@@ -16,14 +16,11 @@ from exception import SystemException, ErrorCode
 @singleton
 class IdentityApplicationService:
     @inject
-    def __init__(self,
-                 application_service_life_cycle: ApplicationServiceLifeCycle,
-                 user_repository: UserRepository,
-                 mail_delivery_service: MailDeliveryService):
-        self.__application_service_life_cycle = application_service_life_cycle
+    def __init__(self, user_repository: UserRepository, mail_delivery_service: MailDeliveryService):
         self.__user_repository = user_repository
         self.__mail_delivery_service = mail_delivery_service
 
+    @transactional
     def register_user(self, command: RegisterUserCommand) -> UserDpo:
         """ユーザー登録"""
         user = User.registered(EmailAddress(command.email_address), command.plain_password)
@@ -50,6 +47,7 @@ class IdentityApplicationService:
 
         return UserDpo(user)
 
+    @transactional
     def verify_email(self, verification_token_value: str) -> None:
         """
         新規登録時に発行されたトークンを検証する。
@@ -92,6 +90,7 @@ class IdentityApplicationService:
 
         return UserDpo(user)
 
+    @transactional
     def authenticate_github_user(self, command: AuthenticateUserCommand) -> UserDpo:
         email_address = EmailAddress(command.email_address)
         user = self.__user_repository.user_with_email_address(email_address)
@@ -111,6 +110,7 @@ class IdentityApplicationService:
             return None
         return UserDpo(user)
 
+    @transactional
     def forgot_password(self, command: ForgotPasswordCommand) -> None:
         """メールアドレス指定でパスワードリセットメールを送信する"""
         email_address = EmailAddress(command.email_address)
@@ -136,6 +136,7 @@ class IdentityApplicationService:
         )
         self.__user_repository.add(user)
 
+    @transactional
     def reset_password(self, command: ResetPasswordCommand) -> None:
         """新しく設定したパスワードとパスワードリセットトークン指定で新しいパスワードに変更する"""
         user = self.__user_repository.user_with_token(command.reset_token)
