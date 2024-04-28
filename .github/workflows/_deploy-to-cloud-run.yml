@@ -81,6 +81,7 @@ jobs:
           --quiet
 
       - name: 公開アクセスを許可する
+        run: |-
           gcloud run services add-iam-policy-binding $REPO_NAME \
           --region=$REGION \
           --member=allUsers \
