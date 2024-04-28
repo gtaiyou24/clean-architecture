@@ -79,3 +79,8 @@ jobs:
           --port 8000 \
           --allow-unauthenticated \
           --quiet
+
+          gcloud run services add-iam-policy-binding $REPO_NAME \
+          --region=$REGION \
+          --member=allUsers \
+          --role=roles/run.invoker \
