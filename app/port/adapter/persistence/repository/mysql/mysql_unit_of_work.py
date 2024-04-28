@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from contextlib import contextmanager
+from typing import override
 
 from injector import inject
 from sqlalchemy import Engine
@@ -49,15 +48,18 @@ class MySQLUnitOfWork(UnitOfWork):
             self.__thread_local_session = self.__ScopedSession()
         return self.__thread_local_session
 
+    @override
     def start(self) -> None:
         self.transaction().begin()
 
+    @override
     def rollback(self) -> None:
         self.transaction().rollback()
         self.transaction().close()
         self.transaction().bind.dispose()
         self.__thread_local_session = None
 
+    @override
     def commit(self) -> None:
         try:
             self.transaction().commit()
