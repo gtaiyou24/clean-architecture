@@ -17,6 +17,7 @@ from port.adapter.persistence.repository.inmem import (
     InMemUserRepository,
 )
 from port.adapter.persistence.repository.mysql import MySQLUnitOfWork, DataBase
+from port.adapter.persistence.repository.mysql.user import MySQLUserRepository
 from port.adapter.resource.auth import AuthResource
 from port.adapter.resource.auth.github import GitHubResource
 from port.adapter.resource.health import HealthResource
@@ -33,7 +34,7 @@ async def lifespan(app: FastAPI):
     """API 起動前と終了後に実行する処理を記載する"""
     DI_LIST = [
         DI.of(UnitOfWork, {"MySQL": MySQLUnitOfWork}, InMemUnitOfWork),
-        DI.of(UserRepository, {}, InMemUserRepository),
+        DI.of(UserRepository, {"MySQL": MySQLUserRepository}, InMemUserRepository),
         DI.of(EncryptionService, {}, EncryptionServiceImpl),
         DI.of(MailDeliveryService, {}, MailDeliveryServiceImpl),
         DI.of(MailDeliveryAdapter, {"SendGrid": SendGridAdapter}, MailHogAdapter),

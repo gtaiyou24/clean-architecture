@@ -1,8 +1,9 @@
+from __future__ import annotations
+
+import datetime
 import enum
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-from typing import Self
 
 
 @dataclass(init=True, frozen=True)
@@ -11,7 +12,7 @@ class Token:
     このクラスは JWT などのトークンとは違い、ユーザ確認やパスワードリセットのために一時的に発行された値を表す値オブジェクトです。
     """
 
-    class Name(enum.Enum):
+    class Type(enum.Enum):
         VERIFICATION = ("検証トークン", 30)
         PASSWORD_RESET = ("パスワードリセットトークン", 10)
 
@@ -19,22 +20,22 @@ class Token:
             self.type = type
             self.expiration_minutes = expiration_minutes
 
-        def generate(self) -> Self:
+        def generate(self) -> Token:
             return Token(
                 self,
                 str(uuid.uuid4()),
-                datetime.utcnow() + timedelta(minutes=self.expiration_minutes),
+                datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=self.expiration_minutes),
             )
 
-    name: Name
+    type: Type
     value: str
-    expires_at: datetime
+    expires_at: datetime.datetime
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self.type)
 
-    def is_(self, name: Name) -> bool:
-        return self.name == name
+    def is_(self, type: Type) -> bool:
+        return self.type == type
 
     def has_expired(self) -> bool:
-        return self.expires_at < datetime.utcnow()
+        return self.expires_at < datetime.datetime.now(datetime.UTC)

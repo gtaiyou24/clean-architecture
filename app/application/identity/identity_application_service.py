@@ -32,7 +32,9 @@ class IdentityApplicationService:
     def register_user(self, command: RegisterUserCommand) -> UserDpo:
         """ユーザー登録"""
         user = User.registered(
-            EmailAddress(command.email_address), command.plain_password
+            self.__user_repository.next_identity(),
+            EmailAddress(command.email_address),
+            command.plain_password
         )
 
         if self.__user_repository.user_with_email_address(user.email_address):
@@ -116,7 +118,7 @@ class IdentityApplicationService:
             # すでにユーザーが存在する場合は、認証完了とする
             return UserDpo(user)
 
-        user = User.registered(email_address, None)
+        user = User.registered(self.__user_repository.next_identity(), email_address, None)
         user.verified()
         self.__user_repository.add(user)
         return UserDpo(user)

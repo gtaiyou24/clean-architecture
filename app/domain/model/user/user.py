@@ -5,11 +5,12 @@ from datetime import datetime
 
 from domain.model import DomainRegistry
 from domain.model.mail import EmailAddress
-from domain.model.user import Token, EncryptionService
+from domain.model.user import Token, EncryptionService, UserId
 
 
 @dataclass(init=False, eq=False)
 class User:
+    _id: UserId
     _email_address: EmailAddress
     _encrypted_password: str | None
     _tokens: set[Token]
@@ -18,6 +19,7 @@ class User:
 
     def __init__(
         self,
+        id: UserId,
         email_address: EmailAddress,
         encrypted_password: str | None,
         tokens: set[Token],
@@ -25,12 +27,14 @@ class User:
         enable: bool,
     ):
         """
+        :param id:
         :param email_address:
         :param encrypted_password: 暗号化されたパスワード。OAuth2認証で登録されたユーザーは None になる。
         :param tokens:
         :param verified_at:
         :param enable:
         """
+        super().__setattr__("_id", id)
         super().__setattr__("_email_address", email_address)
         super().__setattr__("_encrypted_password", encrypted_password)
         super().__setattr__("_tokens", tokens)
@@ -46,8 +50,9 @@ class User:
         return hash(self.email_address)
 
     @staticmethod
-    def registered(email_address: EmailAddress, plain_password: str | None) -> User:
+    def registered(id: UserId, email_address: EmailAddress, plain_password: str | None) -> User:
         return User(
+            id,
             email_address,
             (
                 DomainRegistry.resolve(EncryptionService).encrypt(plain_password)
@@ -60,6 +65,10 @@ class User:
         )
 
     @property
+    def id(self) -> UserId:
+        return self._id
+
+    @property
     def email_address(self) -> EmailAddress:
         return self._email_address
 
@@ -68,8 +77,20 @@ class User:
         return self._encrypted_password
 
     @property
+    def tokens(self) -> set[Token]:
+        return self._tokens
+
+    @property
+    def enable(self) -> bool:
+        return self._enable
+
+    @property
     def disabled(self) -> bool:
         return self._enable is False
+
+    @property
+    def verified_at(self) -> datetime:
+        return self._verified_at
 
     @email_address.setter
     def email_address(self, value: EmailAddress) -> None:
@@ -91,7 +112,7 @@ class User:
         assert self.token_with(reset_token), "パスワードのリセットトークンが不正です。"
 
         self.protect_password(new_plain_password)
-        for token in self.tokens_of(Token.Name.PASSWORD_RESET):
+        for token in self.tokens_of(Token.Type.PASSWORD_RESET):
             self._tokens.remove(token)
 
     def token_with(self, value: str) -> Token | None:
@@ -101,19 +122,19 @@ class User:
                 return e
         return None
 
-    def tokens_of(self, name: Token.Name) -> set[Token]:
+    def tokens_of(self, type: Token.Type) -> set[Token]:
         """トークン名指定で全ての該当トークンを取得できる"""
-        return {e for e in self._tokens if e.is_(name)}
+        return {e for e in self._tokens if e.is_(type)}
 
     def generate_verification_token(self) -> Token:
         """ユーザー確認トークンを発行する"""
-        token = Token.Name.VERIFICATION.generate()
+        token = Token.Type.VERIFICATION.generate()
         self._tokens.add(token)
         return token
 
     def generate_password_reset_token(self) -> Token:
         """パスワードリセットトークンを発行する"""
-        token = Token.Name.PASSWORD_RESET.generate()
+        token = Token.Type.PASSWORD_RESET.generate()
         self._tokens.add(token)
         return token
 
@@ -121,7 +142,7 @@ class User:
         """ユーザー確認を完了できる"""
         self._enable = True
         self._verified_at = datetime.now()
-        for token in self.tokens_of(Token.Name.VERIFICATION):
+        for token in self.tokens_of(Token.Type.VERIFICATION):
             self._tokens.remove(token)
 
     def is_verified(self) -> bool:

@@ -28,4 +28,5 @@ class CacheLayerUser:
         return self.__driver_manager_user.find_by_token(token)
 
     def set(self, user: User) -> None:
-        pass
+        self.__driver_manager_user.upsert(user)
+        # TODO : save cache

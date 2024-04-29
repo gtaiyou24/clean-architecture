@@ -1,2 +1,3 @@
 from .driver_manager_user import DriverManagerUser
 from .cache_layer_user import CacheLayerUser
+from .mysql_user_repository import MySQLUserRepository
