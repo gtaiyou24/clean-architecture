@@ -72,6 +72,7 @@ jobs:
       - name: 古い Docker イメージを削除
         continue-on-error: true  # 初回はDockerイメージがなくエラーになるため、エラーを無視する
         run: |
+          echo gcr.io/$PROJECT_ID/$REPO_NAME
           gcloud artifacts docker images list gcr.io/$PROJECT_ID/$REPO_NAME | \
           xargs gcloud artifacts docker images delete --quiet --async
 
