@@ -70,11 +70,12 @@ jobs:
 
       # 無料枠を超過しないように古いDockerイメージを削除
       - name: 古い Docker イメージを削除
+        uses: 'docker://us-docker.pkg.dev/gcr-cleaner/gcr-cleaner/gcr-cleaner-cli'
         continue-on-error: true  # 初回はDockerイメージがなくエラーになるため、エラーを無視する
-        run: |
-          echo gcr.io/$PROJECT_ID/$REPO_NAME
-          gcloud artifacts docker images list gcr.io/$PROJECT_ID/$REPO_NAME | \
-          xargs gcloud artifacts docker images delete --quiet --async
+        with:
+          args: >-
+            -repo=gcr.io/$PROJECT_ID/$REPO_NAME
+            -keep=5
 
       - name: Docker イメージをビルド
         run: |-
