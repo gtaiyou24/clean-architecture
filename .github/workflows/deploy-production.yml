@@ -48,6 +48,7 @@ jobs:
       registry: 'clean-architecture'
       cloud-run-name: 'clean-architecture'
       region: 'asia-northeast1'
+      cleanup-images: true
 
   deploy-lambda:
     if: ${{ github.event.inputs.deploy_to == 'lambda' }}

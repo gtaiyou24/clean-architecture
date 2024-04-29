@@ -26,8 +26,13 @@ on:
       region:
         description: 'GCP region'
         type: string
-        required: true
+        required: false
         default: 'asia-northeast1'
+      cleanup-images:
+        description: '古い Docker イメージを削除する'
+        type: boolean
+        required: false
+        default: false
 
 env:
   PROJECT_ID: ${{ inputs.project-id }}
@@ -65,8 +70,11 @@ jobs:
 
       # 無料枠を超過しないように古いDockerイメージを削除
       - name: 古い Docker イメージを削除
+        if: ${{ github.event.inputs.cleanup-images }}
         continue-on-error: true  # 初回はDockerイメージがなくエラーになるため、エラーを無視する
-        run: gcloud artifacts docker images delete gcr.io/$PROJECT_ID/$REPO_NAME --quiet
+        run: |
+          gcloud artifacts docker images list gcr.io/$PROJECT_ID/$REPO_NAME | \
+          xargs gcloud artifacts docker images delete --quiet --async
 
       - name: Docker イメージをビルド
         run: |-
