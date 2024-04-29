@@ -50,7 +50,8 @@ class User:
         return hash(self.email_address)
 
     @staticmethod
-    def registered(id: UserId, email_address: EmailAddress, plain_password: str | None) -> User:
+    def provision(id: UserId, email_address: EmailAddress, plain_password: str | None) -> User:
+        """仮登録のためにユーザーを作成する"""
         return User(
             id,
             email_address,

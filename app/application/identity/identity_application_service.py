@@ -29,9 +29,9 @@ class IdentityApplicationService:
         self.__mail_delivery_service = mail_delivery_service
 
     @transactional
-    def register_user(self, command: RegisterUserCommand) -> UserDpo:
-        """ユーザー登録"""
-        user = User.registered(
+    def provision_user(self, command: RegisterUserCommand) -> UserDpo:
+        """ユーザー仮登録"""
+        user = User.provision(
             self.__user_repository.next_identity(),
             EmailAddress(command.email_address),
             command.plain_password

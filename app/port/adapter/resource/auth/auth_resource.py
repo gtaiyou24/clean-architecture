@@ -55,7 +55,7 @@ class AuthResource(APIResource):
             self.__identity_application_service
             or DIContainer.instance().resolve(IdentityApplicationService)
         )
-        dpo = self.__identity_application_service.register_user(
+        dpo = self.__identity_application_service.provision_user(
             RegisterUserCommand(request.email_address, request.password)
         )
         return UserDescriptorJson.from_(dpo)
