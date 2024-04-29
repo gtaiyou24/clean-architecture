@@ -37,7 +37,7 @@ async def lifespan(app: FastAPI):
         DI.of(UserRepository, {"MySQL": MySQLUserRepository}, InMemUserRepository),
         DI.of(EncryptionService, {}, EncryptionServiceImpl),
         DI.of(MailDeliveryService, {}, MailDeliveryServiceImpl),
-        DI.of(MailDeliveryAdapter, {"SendGrid": SendGridAdapter}, MailHogAdapter),
+        DI.of(MailDeliveryAdapter, {"SendGrid": SendGridAdapter}, MailHogAdapter('hello@clean-architecture.com')),
     ]
 
     if "MySQL" in os.getenv("DI_PROFILE_ACTIVES", []):

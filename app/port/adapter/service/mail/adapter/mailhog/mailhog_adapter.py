@@ -9,18 +9,17 @@ from port.adapter.service.mail.adapter import MailDeliveryAdapter
 
 
 class MailHogAdapter(MailDeliveryAdapter):
-    _FROM = "hello@clean-architecture.com"
-
-    def __init__(self):
+    def __init__(self, _from: str):
         self.__smtp = smtplib.SMTP(host="mailhog", port=1025)
+        self.__from = _from
 
     def send(self, to: EmailAddress, subject: str, html: str) -> None:
         mail = MIMEMultipart("alternative")
         mail["Subject"] = subject
-        mail["From"] = self._FROM
+        mail["From"] = self.__from
         mail["To"] = to.value
 
         mail.attach(MIMEText(html2text(html), "plain"))
         mail.attach(MIMEText(html, "html"))
 
-        self.__smtp.sendmail(self._FROM, to.value, mail.as_string())
+        self.__smtp.sendmail(self.__from, to.value, mail.as_string())
