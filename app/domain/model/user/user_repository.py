@@ -16,6 +16,10 @@ class UserRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def remove(self, user: User) -> None:
+        pass
+
+    @abc.abstractmethod
     def user_with_email_address(self, email_address: EmailAddress) -> User | None:
         pass
 

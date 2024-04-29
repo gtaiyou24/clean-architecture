@@ -15,6 +15,10 @@ class InMemUserRepository(UserRepository):
         self.users.add(user)
 
     @override
+    def remove(self, user: User) -> None:
+        self.users.remove(user)
+
+    @override
     def user_with_email_address(self, email_address: EmailAddress) -> User | None:
         for user in self.users:
             if user.email_address == email_address:

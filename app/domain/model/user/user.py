@@ -51,7 +51,7 @@ class User:
 
     @staticmethod
     def provision(id: UserId, email_address: EmailAddress, plain_password: str | None) -> User:
-        """仮登録のためにユーザーを作成する"""
+        """ユーザーを作成する"""
         return User(
             id,
             email_address,

@@ -9,7 +9,7 @@ from application.identity.command import (
     RegisterUserCommand,
     AuthenticateUserCommand,
     ForgotPasswordCommand,
-    ResetPasswordCommand,
+    ResetPasswordCommand, DeleteUserCommand,
 )
 from application.identity.dpo import UserDpo
 from domain.model.mail import MailDeliveryService, EmailAddress
@@ -118,7 +118,7 @@ class IdentityApplicationService:
             # すでにユーザーが存在する場合は、認証完了とする
             return UserDpo(user)
 
-        user = User.registered(self.__user_repository.next_identity(), email_address, None)
+        user = User.provision(self.__user_repository.next_identity(), email_address, None)
         user.verified()
         self.__user_repository.add(user)
         return UserDpo(user)
@@ -170,3 +170,7 @@ class IdentityApplicationService:
         user.reset_password(command.password, command.reset_token)
 
         self.__user_repository.add(user)
+
+    @transactional
+    def delete(self, command: DeleteUserCommand) -> None:
+        self.__user_repository.remove(command.user)

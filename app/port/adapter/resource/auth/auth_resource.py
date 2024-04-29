@@ -8,7 +8,7 @@ from application.identity.command import (
     RegisterUserCommand,
     AuthenticateUserCommand,
     ForgotPasswordCommand,
-    ResetPasswordCommand,
+    ResetPasswordCommand, DeleteUserCommand,
 )
 from application.identity.dpo import UserDpo
 from port.adapter.resource import APIResource
@@ -32,22 +32,26 @@ class AuthResource(APIResource):
             self.register_user,
             methods=["POST"],
             response_model=UserDescriptorJson,
+            name='ユーザーを登録'
         )
         self.router.add_api_route(
-            "/verify-email/{token}", self.verify_email, methods=["POST"]
+            "/verify-email/{token}", self.verify_email, methods=["POST"], name='メールアドレスを確認'
         )
         self.router.add_api_route(
-            "/token", self.token, methods=["POST"], response_model=Token
+            "/token", self.token, methods=["POST"], response_model=Token, name='トークンを発行'
         )
         self.router.add_api_route(
-            "/token", self.refresh, methods=["PUT"], response_model=Token
+            "/token", self.refresh, methods=["PUT"], response_model=Token, name='トークンを更新'
         )
-        self.router.add_api_route("/token", self.revoke, methods=["DELETE"])
+        self.router.add_api_route("/token", self.revoke, methods=["DELETE"], name='トークンを削除')
         self.router.add_api_route(
-            "/forgot-password", self.forgot_password, methods=["POST"]
+            "/forgot-password", self.forgot_password, methods=["POST"], name='パスワードを忘れた'
         )
         self.router.add_api_route(
-            "/reset-password", self.reset_password, methods=["POST"]
+            "/reset-password", self.reset_password, methods=["POST"], name='パスワードをリセット'
+        )
+        self.router.add_api_route(
+            "/unregister", self.unregister, methods=["DELETE"], name='ユーザーを削除'
         )
 
     def register_user(self, request: RegisterUserRequest):
@@ -105,3 +109,12 @@ class AuthResource(APIResource):
         self.__identity_application_service.reset_password(
             ResetPasswordCommand(request.token, request.password)
         )
+
+    def unregister(
+            self, current_user: UserDpo = Depends(get_current_active_user)
+    ) -> None:
+        self.__identity_application_service = (
+                self.__identity_application_service
+                or DIContainer.instance().resolve(IdentityApplicationService)
+        )
+        self.__identity_application_service.delete(DeleteUserCommand(current_user.user))

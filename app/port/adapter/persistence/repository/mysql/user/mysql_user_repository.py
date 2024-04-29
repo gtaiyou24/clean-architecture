@@ -19,6 +19,10 @@ class MySQLUserRepository(UserRepository):
         self.__cache_layer_user.set(user)
 
     @override
+    def remove(self, user: User) -> None:
+        self.__cache_layer_user.delete(user)
+
+    @override
     def user_with_email_address(self, email_address: EmailAddress) -> User | None:
         return self.__cache_layer_user.user_or_origin(email_address)
 

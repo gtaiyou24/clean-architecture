@@ -38,7 +38,7 @@ class DriverManagerUser:
 
     def update(self, user: User) -> None:
         query: Query[type[UsersTableRow]] = self.__unit_of_work.transaction().query(UsersTableRow)
-        optional = query.filter_by(id=user.id.value).one_or_none()
+        optional: UsersTableRow | None = query.filter_by(id=user.id.value).one_or_none()
         if optional is None:
             raise Exception(f'{UsersTableRow.__tablename__}.{user.id.value} が存在しないため、更新できません。')
 
@@ -46,3 +46,14 @@ class DriverManagerUser:
         self.__unit_of_work.transaction().flush()
 
         optional.update(user)
+
+    def delete(self, user: User) -> None:
+        query: Query[type[UsersTableRow]] = self.__unit_of_work.transaction().query(UsersTableRow)
+        optional: UsersTableRow | None = query.filter_by(id=user.id.value).one_or_none()
+        if optional is None:
+            return None
+
+        [self.__unit_of_work.transaction().delete(e) for e in optional.tokens]
+        self.__unit_of_work.transaction().flush()
+
+        optional.deleted = True
