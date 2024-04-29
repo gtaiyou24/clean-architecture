@@ -6,8 +6,9 @@ from application.identity.dpo import UserDpo
 
 
 class UserJson(BaseModel):
+    id: str = Field(title='id')
     email_address: str = Field(title="メールアドレス")
 
     @staticmethod
     def from_(dpo: UserDpo) -> UserJson:
-        return UserJson(email_address=dpo.user.email_address.value)
+        return UserJson(id=dpo.user.id.value, email_address=dpo.user.email_address.value)
