@@ -55,7 +55,7 @@ docker-compose up --build
  - [MailHog](http://0.0.0.0:8025/)
 
 ```bash
-`mysql -h 127.0.0.1 -P 3306 -u user -p`
+mysql -h 127.0.0.1 -P 3306 -u user -p
 # Enter password: pass
 ```
 
