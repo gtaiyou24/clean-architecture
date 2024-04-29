@@ -55,6 +55,11 @@ docker-compose up --build
  - [Swagger UI](http://localhost:8000/docs)
  - [MailHog](http://0.0.0.0:8025/)
 
+```bash
+`mysql -h 127.0.0.1 -P 3306 -u user -p`
+# Enter password: pass
+```
+
 ### ✅ Test
 
 ```bash

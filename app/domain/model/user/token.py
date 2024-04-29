@@ -16,15 +16,15 @@ class Token:
         VERIFICATION = ("検証トークン", 30)
         PASSWORD_RESET = ("パスワードリセットトークン", 10)
 
-        def __init__(self, type: str, expiration_minutes: int):
-            self.type = type
+        def __init__(self, ja: str, expiration_minutes: int):
+            self.ja = ja
             self.expiration_minutes = expiration_minutes
 
         def generate(self) -> Token:
             return Token(
                 self,
                 str(uuid.uuid4()),
-                datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=self.expiration_minutes),
+                datetime.datetime.now() + datetime.timedelta(minutes=self.expiration_minutes),
             )
 
     type: Type
@@ -38,4 +38,4 @@ class Token:
         return self.type == type
 
     def has_expired(self) -> bool:
-        return self.expires_at < datetime.datetime.now(datetime.UTC)
+        return self.expires_at < datetime.datetime.now()
