@@ -50,6 +50,10 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
  --member="serviceAccount:github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
  --role="roles/iam.serviceAccountUser"
+
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+ --member="serviceAccount:github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
+ --role="roles/artifactregistry.repoAdmin"
 ```
 
 **3. Workload Identity プール・プロバイダを作成する**
