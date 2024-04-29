@@ -12,8 +12,7 @@ With this template, I implemented a system that provides role-based secure acces
 git clone https://github.com/gtaiyou24/clean-architecture $YOUR_SYSTEM_NAME
 
 # replace 'clean-architecture' to your system name
-grep 'clean-architecture' -rl * --exclude=README.md --exclude-dir=venv | xargs sed -i "s/clean-architecture/${YOUR_SYSTEM_NAME}/g"
-grep 'clean-architecture' -rl .* --exclude-dir={.idea,.git} | xargs sed -i "s/clean-architecture/${YOUR_SYSTEM_NAME}/g"
+./bin/rename.sh $YOUR_SYSTEM_NAME
 ```
 
 ## 🛠 Architecture
