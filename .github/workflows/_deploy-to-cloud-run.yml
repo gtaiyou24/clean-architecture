@@ -75,6 +75,7 @@ jobs:
         with:
           args: >-
             -repo=gcr.io/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}
+            -tag-filter-any=.*
             -keep=5
 
       - name: Docker イメージをビルド
