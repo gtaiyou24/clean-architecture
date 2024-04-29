@@ -16,8 +16,8 @@ TokenTypeField = Enum("Token.Type", " ".join([e.name for e in Token.Type]))
 class TokensTableRow(DataBase):
     __tablename__ = "tokens"
     __table_args__ = (
-        (UniqueConstraint("user_id", "name", name=f"uix_{__tablename__}_1")),
-        (Index(f"idx_{__tablename__}_1", 'user_id', 'name')),
+        (UniqueConstraint("user_id", "type", name=f"uix_{__tablename__}_1")),
+        (Index(f"idx_{__tablename__}_1", 'user_id', 'type')),
         {"mysql_charset": "utf8mb4", "mysql_engine": "InnoDB"}
     )
 
