@@ -47,6 +47,7 @@ jobs:
       service-account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
       registry: 'clean-architecture'
       cloud-run-name: 'clean-architecture'
+      env-vars: 'LOG_LEVEL=INFO,OPENAPI_PREFIX=,DI_PROFILE_ACTIVES=InMem,FRONTEND_URL=http://localhost:3000'
       region: 'asia-northeast1'
       cleanup-images: true
 

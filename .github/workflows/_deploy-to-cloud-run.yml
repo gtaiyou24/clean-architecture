@@ -23,6 +23,10 @@ on:
         description: 'Cloud Run Name'
         type: string
         required: true
+      env-vars:
+        description: 'Cloud Run で利用する環境変数. ex) KEY=VALUE,...'
+        type: string
+        required: true
       region:
         description: 'GCP region'
         type: string
@@ -40,6 +44,7 @@ env:
   WIF_SERVICE_ACCOUNT: ${{ inputs.service-account }}
   REPO_NAME: ${{ inputs.registry }}
   CLOUD_RUN_NAME: ${{ inputs.cloud-run-name }}
+  ENV_VARS: ${{ env-vars }}
   REGION: ${{ inputs.region }}
 
 concurrency:
@@ -93,5 +98,6 @@ jobs:
           --platform "managed" \
           --port 8000 \
           --allow-unauthenticated \
-          --set-secrets="DATABASE_URL=DATABASE_URL:latest,JWT_SECRET_KEY=JWT_SECRET_KEY:latest" \
+          --set-env-vars $ENV_VARS \
+          --set-secrets "DATABASE_URL=DATABASE_URL:latest,JWT_SECRET_KEY=JWT_SECRET_KEY:latest" \
           --quiet
