@@ -2,5 +2,7 @@
 
 repo_name=$1
 
-grep 'clean-architecture' -rl * --exclude=README.md --exclude-dir=venv | xargs sed -i "s/clean-architecture/${repo_name}/g"
-grep 'clean-architecture' -rl .* --exclude-dir={.idea,.git} | xargs sed -i "s/clean-architecture/${repo_name}/g"
+sed -i '' "s/clean-architecture/${repo_name}/g" *.py
+sed -i '' "s/clean-architecture/${repo_name}/g" *.yaml
+
+grep 'clean-architecture' -rl .* --exclude-dir={.idea,.git} | xargs sed -i '' "s/clean-architecture/${repo_name}/g"
