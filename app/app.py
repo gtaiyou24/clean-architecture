@@ -28,19 +28,19 @@ from port.adapter.service.mail.adapter.sendgrid import SendGridAdapter
 from port.adapter.service.mail.adapter.stub import MailDeliveryAdapterStub
 from port.adapter.service.mail.mail_delivery_service_impl import MailDeliveryServiceImpl
 from port.adapter.service.user import EncryptionServiceImpl
+from settings import AppSettings, LocalSettings, ProductionSettings
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """API 起動前と終了後に実行する処理を記載する"""
     DI_LIST = [
+        DI.of(AppSettings, {"Production": ProductionSettings}, LocalSettings),
         DI.of(UnitOfWork, {"MySQL": MySQLUnitOfWork}, InMemUnitOfWork),
         DI.of(UserRepository, {"MySQL": MySQLUserRepository}, InMemUserRepository),
         DI.of(EncryptionService, {}, EncryptionServiceImpl),
         DI.of(MailDeliveryService, {}, MailDeliveryServiceImpl),
-        DI.of(MailDeliveryAdapter,
-              {"SendGrid": SendGridAdapter, "MailHog": MailHogAdapter('hello@clean-architecture.com')},
-              MailDeliveryAdapterStub),
+        DI.of(MailDeliveryAdapter, {"SendGrid": SendGridAdapter, "MailHog": MailHogAdapter}, MailDeliveryAdapterStub),
     ]
 
     if "MySQL" in os.getenv("DI_PROFILE_ACTIVES", []):
