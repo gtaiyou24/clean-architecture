@@ -52,9 +52,5 @@ class MySQLUnitOfWork(UnitOfWork):
 
     @override
     def commit(self) -> None:
-        try:
-            self.session().commit()
-            self.__ThreadLocalSession.remove()
-        except Exception as e:
-            self.rollback()
-            raise e
+        self.session().commit()
+        self.__ThreadLocalSession.remove()
