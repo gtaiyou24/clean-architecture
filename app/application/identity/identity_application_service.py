@@ -54,7 +54,9 @@ class IdentityApplicationService:
             <html>
             <body>
                 <h1>メールアドレスの確認をします</h1>
-                <a href="{self.__app_settings.FRONTEND_URL}/auth/new-verification?token={token.value}">こちらをクリックしてください。</a>
+                <a href="{self.__app_settings.FRONTEND_URL}/auth/new-verification?token={token.value}">
+                    こちらをクリックしてください。
+                </a>
             </body>
             </html>
             """,
@@ -101,7 +103,9 @@ class IdentityApplicationService:
                 <html>
                 <body>
                     <h1>メールアドレスの確認をします</h1>
-                    <a href="{self.__app_settings.FRONTEND_URL}/auth/new-verification?token={token.value}">こちらをクリックしてください。</a>
+                    <a href="{self.__app_settings.FRONTEND_URL}/auth/new-verification?token={token.value}">
+                        こちらをクリックしてください。
+                    </a>
                 </body>
                 </html>
                 """,
