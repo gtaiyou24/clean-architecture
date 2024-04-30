@@ -25,6 +25,7 @@ from port.adapter.resource.user import UserResource
 from port.adapter.service.mail.adapter import MailDeliveryAdapter
 from port.adapter.service.mail.adapter.mailhog import MailHogAdapter
 from port.adapter.service.mail.adapter.sendgrid import SendGridAdapter
+from port.adapter.service.mail.adapter.stub import MailDeliveryAdapterStub
 from port.adapter.service.mail.mail_delivery_service_impl import MailDeliveryServiceImpl
 from port.adapter.service.user import EncryptionServiceImpl
 
@@ -37,7 +38,9 @@ async def lifespan(app: FastAPI):
         DI.of(UserRepository, {"MySQL": MySQLUserRepository}, InMemUserRepository),
         DI.of(EncryptionService, {}, EncryptionServiceImpl),
         DI.of(MailDeliveryService, {}, MailDeliveryServiceImpl),
-        DI.of(MailDeliveryAdapter, {"SendGrid": SendGridAdapter}, MailHogAdapter('hello@clean-architecture.com')),
+        DI.of(MailDeliveryAdapter,
+              {"SendGrid": SendGridAdapter, "MailHog": MailHogAdapter('hello@clean-architecture.com')},
+              MailDeliveryAdapterStub),
     ]
 
     if "MySQL" in os.getenv("DI_PROFILE_ACTIVES", []):
