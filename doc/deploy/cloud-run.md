@@ -18,7 +18,7 @@ gcloud services enable iamcredentials.googleapis.com --project=${PROJECT_ID}
 gcloud services enable secretmanager.googleapis.com --project=${PROJECT_ID}
 ```
 
-### 🛠️ 2. サービスアカウントを作成する
+### ⚙️ 2. GitHub Actions のサービスアカウントを作成する
 
 ```bash
 # サービスアカウントを作成
@@ -86,7 +86,38 @@ gcloud iam service-accounts add-iam-policy-binding "github-actions@${PROJECT_ID}
   --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-actions-pool/attribute.repository/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}"
 ```
 
-### 📝 5. GitHub Actions の Variable に GCP 情報を保存する
+### ⚙️ 5. Cloud Run サービスのサービスアカウントを作成する
+
+```bash
+# Cloud Run サービスアカウントを作成
+gcloud iam service-accounts create ${CLOUD_RUN_SERVICE_ACCOUNT}\
+ --project=${PROJECT_ID} \
+ --display-name="${CLOUD_RUN_SERVICE_ACCOUNT} サービスアカウント" \
+ --description="${CLOUD_RUN_SERVICE_ACCOUNT} のサービスアカウント"
+
+# サービスアカウントが作成できたか確認
+gcloud iam service-accounts list
+```
+
+Cloud Run のデプロイに必要なロールを付与する
+```bash
+# サービスアカウントユーザー
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+ --member="serviceAccount:${CLOUD_RUN_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com" \
+ --role="roles/iam.serviceAccountUser"
+ 
+# Secret Manager アクセス権限
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+ --member="serviceAccount:${CLOUD_RUN_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com" \
+ --role="roles/secretmanager.secretAccessor"
+
+# Cloud Run の管理者権限
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+ --member="serviceAccount:${CLOUD_RUN_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com" \
+ --role="roles/run.admin"
+```
+
+### 📝 6. GitHub Actions の Variable に GCP 情報を保存する
 ※もしくは直接 `.github/workflows` 以下の YAML ファイルに書き込む
 
 |            変数             | 説明                      | 例                                                                                               |
@@ -94,8 +125,9 @@ gcloud iam service-accounts add-iam-policy-binding "github-actions@${PROJECT_ID}
 |    `GCP_WIF_PROVIDER`     | Workload Identity プロバイダ | `projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/<プールID>/providers/<プロバイダID>` |
 | `GCP_WIF_SERVICE_ACCOUNT` | サービスアカウント               | `github-actions@${PROJECT_ID}.iam.gserviceaccount.com`                                          |
 |     `GCP_PROJECT_ID`      | プロジェクトID                | `clean-architecture`                                                                            |
+| `GCP_CLOUD_RUN_SERVICE`   | Cloud Run のサービスアカウント | `${CLOUD_RUN_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com`                            |
 
-### 🔑 6. GitHub Actions が Secret Manager からクレデンシャル情報を取得できるようにする
+### 🔑 7. GitHub Actions が Secret Manager からクレデンシャル情報を取得できるようにする
 データベースのパスワードや JWT で利用するキーなどのクレデンシャル情報を Secret Manager に保存しておきます。
 
 [Secret Manager – Google Cloud コンソール](https://console.cloud.google.com/security/secret-manager?hl=ja)
@@ -105,13 +137,6 @@ gcloud iam service-accounts add-iam-policy-binding "github-actions@${PROJECT_ID}
 | `DATABASE_URL` | SQLAlchemy の `create_engine` の引数に指定する URL |
 | `JWT_SECRET_KEY` | `jose.jwt` のエンコーディング・でコーディングで指定するキー |
 
-次に GitHub Actions のサービスアカウントに Secret Manager アクセサー ロールを付与します。
-```bash
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
- --member="serviceAccount:github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
- --role="roles/secretmanager.secretAccessor"
-```
-
-### 🚀 6. GitHub の Actions からリリース
+### 🚀 8. GitHub の Actions からリリース
 
 <img src="./deploy-production.png">

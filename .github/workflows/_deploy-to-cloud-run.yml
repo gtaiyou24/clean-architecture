@@ -23,6 +23,10 @@ on:
         description: 'Cloud Run Name'
         type: string
         required: true
+      cloud-run-service-account:
+        description: 'Cloud Run のサービスアカウント'
+        type: string
+        required: true
       env-vars:
         description: 'Cloud Run で利用する環境変数. ex) KEY=VALUE,...'
         type: string
@@ -44,6 +48,7 @@ env:
   WIF_SERVICE_ACCOUNT: ${{ inputs.service-account }}
   REPO_NAME: ${{ inputs.registry }}
   CLOUD_RUN_NAME: ${{ inputs.cloud-run-name }}
+  CLOUD_RUN_SERVICE_ACCOUNT: ${{ inputs.cloud-run-service-account }}
   ENV_VARS: ${{ inputs.env-vars }}
   REGION: ${{ inputs.region }}
 
@@ -90,22 +95,15 @@ jobs:
         run: |-
           docker push gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
 
-      - name: Secret Manager からクレデンシャル情報を取得
-        id: 'secrets'
-        uses: 'google-github-actions/get-secretmanager-secrets@v2'
-        with:
-          secrets: |-
-            DATABASE_URL:${{ env.PROJECT_ID }}/DATABASE_URL
-            JWT_SECRET_KEY:${{ env.PROJECT_ID }}/JWT_SECRET_KEY
-
       - name: デプロイ
         run: |-
           gcloud run deploy $CLOUD_RUN_NAME \
           --region $REGION \
           --image gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
           --platform "managed" \
+          --service-account $CLOUD_RUN_SERVICE_ACCOUNT \
           --port 8000 \
           --allow-unauthenticated \
           --set-env-vars $ENV_VARS \
-          --set-secrets DATABASE_URL=${{ steps.secrets.outputs.DATABASE_URL }}:latest,JWT_SECRET_KEY=${{ steps.secrets.outputs.JWT_SECRET_KEY }}:latest \
+          --set-secrets DATABASE_URL=DATABASE_URL:latest,JWT_SECRET_KEY=JWT_SECRET_KEY:latest" \
           --quiet
