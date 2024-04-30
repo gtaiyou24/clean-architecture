@@ -29,8 +29,8 @@ class CacheLayerUser:
 
     def set(self, user: User) -> None:
         self.__driver_manager_user.upsert(user)
-        # TODO : save cache
+        TTLCache(maxsize=128, ttl=self.__TTL).clear()
 
     def delete(self, user: User) -> None:
         self.__driver_manager_user.delete(user)
-        # TODO : delete cache
+        TTLCache(maxsize=128, ttl=self.__TTL).clear()
