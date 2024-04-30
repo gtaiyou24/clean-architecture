@@ -8,8 +8,8 @@ class UnitOfWork(abc.ABC):
 
     詳細は以下の資料を参照してください。
 
-    * https://bliki-ja.github.io/pofeaa/UnitofWork
-    * https://learn.microsoft.com/ja-jp/archive/msdn-magazine/2009/june/the-unit-of-work-pattern-and-persistence-ignorance
+    https://bliki-ja.github.io/pofeaa/UnitofWork
+    https://learn.microsoft.com/ja-jp/archive/msdn-magazine/2009/june/the-unit-of-work-pattern-and-persistence-ignorance
     """
 
     @abc.abstractmethod
