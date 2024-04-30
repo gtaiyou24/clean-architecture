@@ -2,6 +2,7 @@
 fastapi==0.110.2
 uvicorn[standard]==0.29.0
 python-multipart==0.0.9
+pydantic-settings==2.2.1
 
 # Auth
 passlib[bcrypt]==1.7.4
