@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import os
-
 from injector import singleton, inject
 
 from application import transactional
