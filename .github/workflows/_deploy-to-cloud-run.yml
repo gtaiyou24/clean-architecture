@@ -44,7 +44,7 @@ env:
   WIF_SERVICE_ACCOUNT: ${{ inputs.service-account }}
   REPO_NAME: ${{ inputs.registry }}
   CLOUD_RUN_NAME: ${{ inputs.cloud-run-name }}
-  ENV_VARS: ${{ env-vars }}
+  ENV_VARS: ${{ inputs.env-vars }}
   REGION: ${{ inputs.region }}
 
 concurrency:
