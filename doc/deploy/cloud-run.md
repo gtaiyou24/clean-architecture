@@ -98,6 +98,8 @@ gcloud iam service-accounts add-iam-policy-binding "github-actions@${PROJECT_ID}
 ### 🔑 6. GitHub Actions が Secret Manager からクレデンシャル情報を取得できるようにする
 データベースのパスワードや JWT で利用するキーなどのクレデンシャル情報を Secret Manager に保存しておきます。
 
+[Secret Manager – Google Cloud コンソール](https://console.cloud.google.com/security/secret-manager?hl=ja)
+
 | キー | 値                                         |
 |:----|:------------------------------------------|
 | `DATABASE_URL` | SQLAlchemy の `create_engine` の引数に指定する URL |
