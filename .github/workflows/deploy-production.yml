@@ -48,7 +48,7 @@ jobs:
       registry: 'clean-architecture'
       cloud-run-name: 'clean-architecture'
       cloud-run-service-account: ${{ vars.GCP_CLOUD_RUN_SERVICE_ACCOUNT }}
-      env-vars: LOG_LEVEL=INFO,OPENAPI_PREFIX=,DI_PROFILE_ACTIVES=InMem,FRONTEND_URL=http://localhost:3000
+      env-vars: LOG_LEVEL=INFO,OPENAPI_PREFIX=,DI_PROFILE_ACTIVES=InMem
       region: 'asia-northeast1'
       cleanup-images: true
 

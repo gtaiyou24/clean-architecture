@@ -15,6 +15,7 @@ from application.identity.dpo import UserDpo
 from domain.model.mail import MailDeliveryService, EmailAddress
 from domain.model.user import UserRepository, User
 from exception import SystemException, ErrorCode
+from settings import AppSettings
 
 
 @singleton
@@ -22,9 +23,11 @@ class IdentityApplicationService:
     @inject
     def __init__(
         self,
+        app_settings: AppSettings,
         user_repository: UserRepository,
         mail_delivery_service: MailDeliveryService,
     ):
+        self.__app_settings = app_settings
         self.__user_repository = user_repository
         self.__mail_delivery_service = mail_delivery_service
 
@@ -53,7 +56,7 @@ class IdentityApplicationService:
             <html>
             <body>
                 <h1>メールアドレスの確認をします</h1>
-                <a href="{os.getenv('FRONTEND_URL')}/auth/new-verification?token={token.value}">こちらをクリックしてください。</a>
+                <a href="{self.__app_settings.FRONTEND_URL}/auth/new-verification?token={token.value}">こちらをクリックしてください。</a>
             </body>
             </html>
             """,
@@ -100,7 +103,7 @@ class IdentityApplicationService:
                 <html>
                 <body>
                     <h1>メールアドレスの確認をします</h1>
-                    <a href="{os.getenv('FRONTEND_URL')}/auth/new-verification?token={token.value}">こちらをクリックしてください。</a>
+                    <a href="{self.__app_settings.FRONTEND_URL}/auth/new-verification?token={token.value}">こちらをクリックしてください。</a>
                 </body>
                 </html>
                 """,
@@ -150,7 +153,7 @@ class IdentityApplicationService:
             <html>
             <body>
                 <h1>パスワードをリセット</h1>
-                <a href="{os.getenv('FRONTEND_URL')}/auth/new-password?token={token.value}">こちらをクリックしてください。</a>
+                <a href="{self.__app_settings.FRONTEND_URL}/auth/new-password?token={token.value}">こちらをクリックしてください。</a>
             </body>
             </html>
             """,
