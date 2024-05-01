@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from functools import wraps
 from typing import override
 
+from di import DIContainer
 from injector import singleton, inject
 
 from application import UnitOfWork
@@ -38,3 +40,19 @@ class ApplicationServiceLifeCycle:
     def listen(self):
         DomainEventPublisher.shared().reset()
         DomainEventPublisher.shared().subscribe(DomainEventSubscriberImpl())
+
+
+def transactional(method, is_listening: bool = True):
+    @wraps(method)
+    def handle_transaction(*args, **kwargs):
+        application_life_cycle = DIContainer.instance().resolve(ApplicationServiceLifeCycle)
+
+        try:
+            application_life_cycle.begin(is_listening)
+            _return = method(*args, **kwargs)
+            application_life_cycle.success()
+            return _return
+        except Exception as e:
+            application_life_cycle.fail(e)
+
+    return handle_transaction
