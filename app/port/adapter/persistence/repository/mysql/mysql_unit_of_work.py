@@ -39,6 +39,9 @@ class MySQLUnitOfWork(UnitOfWork):
 
     @override
     def start(self) -> None:
+        if self.session().in_transaction():
+            # すでに何かしらのトランザクションが開始されている場合は、前回のセッションを削除し、新しいセッションを作成する
+            self.__ThreadLocalSession.remove()
         self.session().begin()
 
     @override
