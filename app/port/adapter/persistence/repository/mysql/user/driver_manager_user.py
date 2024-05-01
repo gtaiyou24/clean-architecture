@@ -20,7 +20,7 @@ class DriverManagerUser:
 
     def find_by_token(self, value: str) -> User | None:
         query: Query[type[TokensTableRow]] = self.__unit_of_work.session().query(TokensTableRow)
-        optional: TokensTableRow | None = query.filter_by(value=value, deleted=False).one_or_none()
+        optional: TokensTableRow | None = query.filter_by(value=value).one_or_none()
         return optional.user.to_entity() if optional else None
 
     def upsert(self, user: User) -> None:
