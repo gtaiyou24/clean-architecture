@@ -4,12 +4,16 @@ import abc
 
 
 class UnitOfWork(abc.ABC):
-    """ユニット・オブ・ワークの抽象クラス。
+    """UnitOfWorkの抽象クラス。
 
-    詳細は以下の資料を参照してください。
-
+    UnitOfWork の詳細は以下をご確認ください。
     https://bliki-ja.github.io/pofeaa/UnitofWork
     https://learn.microsoft.com/ja-jp/archive/msdn-magazine/2009/june/the-unit-of-work-pattern-and-persistence-ignorance
+
+    UnitOfWork はいくつかの課題を解決します。
+    * 最小の DB トランザクション実行, SQL クエリ発行をすることで、パフォーマンス問題を解決する
+    * DDD において、ドメインオブジェクトの制御と永続化処理を分離させられる
+    * 異なる DB コネクション、異なる Redis コネクション全てを単一の論理的なトランザクションにまとめられる
     """
 
     @abc.abstractmethod
