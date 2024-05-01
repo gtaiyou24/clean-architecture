@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import wraps
-from typing import override
+from typing import override, Callable
 
 from di import DIContainer
 from injector import singleton, inject
@@ -42,13 +42,14 @@ class ApplicationServiceLifeCycle:
         DomainEventPublisher.shared().subscribe(DomainEventSubscriberImpl())
 
 
-def transactional(method, is_listening: bool = True):
+def transactional(method: Callable[..., T], is_listening: bool = True):
+    """AOPによるトランザクション管理を行うためのデコーダー"""
     @wraps(method)
-    def handle_transaction(*args, **kwargs):
+    def handle_transaction(*args, **kwargs) -> T:
         application_life_cycle = DIContainer.instance().resolve(ApplicationServiceLifeCycle)
 
+        application_life_cycle.begin(is_listening)
         try:
-            application_life_cycle.begin(is_listening)
             _return = method(*args, **kwargs)
             application_life_cycle.success()
             return _return
