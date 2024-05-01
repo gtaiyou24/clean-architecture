@@ -42,7 +42,7 @@ class ApplicationServiceLifeCycle:
         DomainEventPublisher.shared().subscribe(DomainEventSubscriberImpl())
 
 
-def transactional(method: Callable[..., T], is_listening: bool = True):
+def transactional[T](method: Callable[..., T], is_listening: bool = True):
     """AOPによるトランザクション管理を行うためのデコーダー"""
     @wraps(method)
     def handle_transaction(*args, **kwargs) -> T:
