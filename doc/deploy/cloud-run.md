@@ -8,6 +8,9 @@
 # Google Cloud SDK と Google アカウントを連携させる
 gcloud auth login
 
+# プロジェクトを確認
+gcloud projects list
+
 # プロジェクトを変更する
 gcloud config set project ${PROJECT_ID}
 ```
