@@ -9,8 +9,6 @@ With this template, I implemented a system that provides role-based secure acces
  - [SQLAlchemy](https://pypi.org/project/SQLAlchemy/)
 
 ```bash
-git clone https://github.com/gtaiyou24/clean-architecture $YOUR_SYSTEM_NAME
-
 # replace 'clean-architecture' to your system name
 sh ./bin/rename.sh $YOUR_SYSTEM_NAME
 ```
