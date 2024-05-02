@@ -3,7 +3,7 @@
 <img src="https://storage.googleapis.com/gweb-cloudblog-publish/images/Cloud_Run.max-2600x2600.jpg" width="400">
 
 ## 🏃 手順
-### 💡 1. IAM Service Account Credentials API を有効にする
+### 💡 1. GCP API を有効にする
 ```bash
 # Google Cloud SDK と Google アカウントを連携させる
 gcloud auth login
@@ -19,6 +19,17 @@ gcloud config set project ${PROJECT_ID}
 
  - [Identity and Access Management (IAM) API](https://console.cloud.google.com/flows/enableapi?apiid=iam.googleapis.com&%3Bredirect=https%3A%2F%2Fconsole.cloud.google.com&hl=ja)
  - [Secret Manager API](https://console.cloud.google.com/marketplace/product/google/secretmanager.googleapis.com)
+ - [Artifact Registry API](https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com)
+ - [Cloud Run Admin API](https://console.cloud.google.com/apis/library/run.googleapis.com)
+
+```bash
+# IAM API / Secret Manager API / Artifact Registry API を許可する
+gcloud services enable \
+  iamcredentials.googleapis.com \
+  secretmanager.googleapis.com \
+  secretmanager.googleapis.com \
+  --project=${PROJECT_ID}
+```
 
 ### ⚙️ 2. GitHub Actions のサービスアカウントを作成する
 
@@ -35,12 +46,12 @@ gcloud iam service-accounts list
 
 GitHub Actions 経由でデプロイするために、本システムで以下のロールを利用します。そのため、予めサービスアカウントに以下のロールを付与します。
 
-| ロール                                | 説明                                   |
-|:-----------------------------------|:-------------------------------------|
-| `roles/run.admin`                  | Cloud Run を設定し、デプロイするためのロール          |
-| `roles/iam.serviceAccountUser`     | サービスアカウントのユーザーとしてのロール                |
-| `roles/artifactregistry.repoAdmin` | Artifact Registry へのプッシュ、削除をするためのロール |
-| `roles/`                           |  |
+| ロール                                          | 説明                                    |
+|:---------------------------------------------|:--------------------------------------|
+| `roles/run.admin`                            | Cloud Run を設定し、デプロイするためのロール           |
+| `roles/iam.serviceAccountUser`               | サービスアカウントのユーザーとしてのロール                 |
+| `roles/artifactregistry.repoAdmin`           | Artifact Registry へのプッシュ、削除をするためのロール  |
+| `roles/artifactregistry.createOnPushWriter`  | Artifact Registry にリポジトリを新規作成するためのロール |
 
 ```bash
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
@@ -54,6 +65,10 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
  --member="serviceAccount:github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
  --role="roles/artifactregistry.repoAdmin"
+ 
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+ --member="serviceAccount:github-actions@${PROJECT_ID}.iam.gserviceaccount.com" \
+ --role="roles/artifactregistry.createOnPushWriter"
 ```
 
 ### 🛠️ 3. Workload Identity プール・プロバイダを作成する
