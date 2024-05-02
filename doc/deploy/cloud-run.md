@@ -10,10 +10,11 @@ gcloud auth login
 
 # プロジェクトを変更する
 gcloud config set project ${PROJECT_ID}
-
-# IAM API を許可する
-gcloud services enable iamcredentials.googleapis.com --project=${PROJECT_ID}
 ```
+
+以下のページにアクセスして、 有効化してください。
+
+[API へのアクセスの有効化](https://console.cloud.google.com/flows/enableapi?apiid=iam.googleapis.com&%3Bredirect=https%3A%2F%2Fconsole.cloud.google.com&hl=ja)
 
 以下のページにアクセスして、Secret Manager API を有効にしてください。
 
