@@ -13,10 +13,11 @@ gcloud config set project ${PROJECT_ID}
 
 # IAM API を許可する
 gcloud services enable iamcredentials.googleapis.com --project=${PROJECT_ID}
-
-# Secret Manager API を許可する
-gcloud services enable secretmanager.googleapis.com --project=${PROJECT_ID}
 ```
+
+以下のページにアクセスして、Secret Manager API を有効にしてください。
+
+https://console.cloud.google.com/marketplace/product/google/secretmanager.googleapis.com
 
 ### ⚙️ 2. GitHub Actions のサービスアカウントを作成する
 
