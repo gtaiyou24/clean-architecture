@@ -12,13 +12,10 @@ gcloud auth login
 gcloud config set project ${PROJECT_ID}
 ```
 
-以下のページにアクセスして、「Identity and Access Management (IAM) API」を有効にしてください。
+以下のそれぞれのページにアクセスして、各 API を有効にしてください。
 
-[API へのアクセスの有効化](https://console.cloud.google.com/flows/enableapi?apiid=iam.googleapis.com&%3Bredirect=https%3A%2F%2Fconsole.cloud.google.com&hl=ja)
-
-以下のページにアクセスして、Secret Manager API を有効にしてください。
-
-https://console.cloud.google.com/marketplace/product/google/secretmanager.googleapis.com
+ - [Identity and Access Management (IAM) API](https://console.cloud.google.com/flows/enableapi?apiid=iam.googleapis.com&%3Bredirect=https%3A%2F%2Fconsole.cloud.google.com&hl=ja)
+ - [Secret Manager API](https://console.cloud.google.com/marketplace/product/google/secretmanager.googleapis.com)
 
 ### ⚙️ 2. GitHub Actions のサービスアカウントを作成する
 
