@@ -12,7 +12,7 @@ gcloud auth login
 gcloud config set project ${PROJECT_ID}
 ```
 
-以下のページにアクセスして、 有効化してください。
+以下のページにアクセスして、「Identity and Access Management (IAM) API」を有効にしてください。
 
 [API へのアクセスの有効化](https://console.cloud.google.com/flows/enableapi?apiid=iam.googleapis.com&%3Bredirect=https%3A%2F%2Fconsole.cloud.google.com&hl=ja)
 
