@@ -16,9 +16,6 @@ slf4py==0.0.2
 SQLAlchemy==2.0.29
 mysqlclient==2.2.4
 
-# Cache
-cachetools==5.3.3
-
 # Mail
 html2text==2024.2.26
 
