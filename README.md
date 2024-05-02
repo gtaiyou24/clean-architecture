@@ -8,9 +8,28 @@ With this template, I implemented a system that provides role-based secure acces
  - [pytest](https://pypi.org/project/pytest/)
  - [SQLAlchemy](https://pypi.org/project/SQLAlchemy/)
 
+## 📖How To
+### 💻 Set Up
+
+READ [SET_UP.md](./doc/SET_UP.md)
+
+### 🏃 Start
 ```bash
-# replace 'clean-architecture' to your system name
-sh ./bin/rename.sh $YOUR_SYSTEM_NAME
+docker-compose up --build
+```
+ - [Swagger UI](http://localhost:8000/docs)
+ - [MailHog](http://0.0.0.0:8025/)
+
+```bash
+mysql -h 127.0.0.1 -P 3306 -u user -p
+# Enter password: pass
+```
+
+### ✅ Test
+
+```bash
+pip install pytest pytest-env httpx
+pytest -v ./test
 ```
 
 ## 🛠 Architecture
@@ -43,26 +62,6 @@ app
 ```
 
 </details>
-
-## 📖How To
-### 🏃 Start
-```bash
-docker-compose up --build
-```
- - [Swagger UI](http://localhost:8000/docs)
- - [MailHog](http://0.0.0.0:8025/)
-
-```bash
-mysql -h 127.0.0.1 -P 3306 -u user -p
-# Enter password: pass
-```
-
-### ✅ Test
-
-```bash
-pip install pytest pytest-env httpx
-pytest -v ./test
-```
 
 ## 🔗Appendix
 
