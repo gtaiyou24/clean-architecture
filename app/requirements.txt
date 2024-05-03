@@ -12,9 +12,11 @@ python-jose[cryptography]==3.3.0
 di4injector==0.0.1
 slf4py==0.0.2
 
-# MySQL
+# DataBase
 SQLAlchemy==2.0.29
-mysqlclient==2.2.4
+#mysqlclient==2.2.4 # MySQL
+psycopg2-binary==2.9.9  # Postgresql
+psycopg2==2.9.9  # Postgresql
 
 # Mail
 html2text==2024.2.26

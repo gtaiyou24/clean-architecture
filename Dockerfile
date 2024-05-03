@@ -11,7 +11,7 @@ RUN apt-get update -y \
     # install following libraries to connect to MySQL
     && apt-get install -y default-libmysqlclient-dev pkg-config build-essential \
     # To Connect to Postgresql
-    # && apt-get install -y postgresql-client libpq-dev build-essential \
+    && apt-get install -y postgresql-client libpq-dev build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --upgrade pip \

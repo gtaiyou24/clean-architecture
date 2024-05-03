@@ -17,8 +17,10 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+#      postgresql:
+#        condition: service_healthy
 
-  # DB
+  # MySQL
   mysql:
     image: mysql:8.0
     platform: linux/x86_64
@@ -43,6 +45,29 @@ services:
       retries: 3
       start_period: 30s
 
+  # Postgresql
+  postgresql:
+    image: postgres:14
+    platform: linux/x86_64
+    container_name: clean-architecture-postgresql
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=clean-architecture
+      - TZ=Asia/Tokyo
+    ports:
+      - "5432:5432"
+    volumes:
+      - clean-architecture-postgresql-volume:/var/lib/postgresql
+    tty: true
+    healthcheck:
+      # Postgresql が起動しているか確認するための設定
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
   # Mail Server
   mailhog:
     image: mailhog/mailhog
@@ -51,5 +76,9 @@ services:
       - "8025:8025"
 
 volumes:
+  # MySQL
   clean-architecture-mysql-volume:
+    driver: 'local'
+  # Postgresql
+  clean-architecture-postgresql-volume:
     driver: 'local'
