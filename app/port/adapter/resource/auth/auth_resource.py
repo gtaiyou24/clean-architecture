@@ -18,7 +18,7 @@ from port.adapter.resource.auth.request import (
     ForgotPasswordRequest,
     ResetPasswordRequest,
 )
-from port.adapter.resource.auth.response import UserDescriptorJson, Token
+from port.adapter.resource.auth.response import UserDescriptorJson, TokenJson
 from port.adapter.resource.dependency import get_current_active_user
 
 
@@ -38,10 +38,10 @@ class AuthResource(APIResource):
             "/verify-email/{token}", self.verify_email, methods=["POST"], name='メールアドレスを確認'
         )
         self.router.add_api_route(
-            "/token", self.token, methods=["POST"], response_model=Token, name='トークンを発行'
+            "/token", self.token, methods=["POST"], response_model=TokenJson, name='トークンを発行'
         )
         self.router.add_api_route(
-            "/token", self.refresh, methods=["PUT"], response_model=Token, name='トークンを更新'
+            "/token", self.refresh, methods=["PUT"], response_model=TokenJson, name='トークンを更新'
         )
         self.router.add_api_route("/token", self.revoke, methods=["DELETE"], name='トークンを削除')
         self.router.add_api_route(
@@ -71,7 +71,7 @@ class AuthResource(APIResource):
         )
         self.__identity_application_service.verify_email(token)
 
-    def token(self, request: OAuth2PasswordRequest) -> Token:
+    def token(self, request: OAuth2PasswordRequest) -> TokenJson:
         self.__identity_application_service = (
             self.__identity_application_service
             or DIContainer.instance().resolve(IdentityApplicationService)
@@ -79,12 +79,12 @@ class AuthResource(APIResource):
         dpo = self.__identity_application_service.authenticate_user(
             AuthenticateUserCommand(request.email_address, request.password)
         )
-        return Token.generate(dpo)
+        return TokenJson.generate(dpo)
 
     def refresh(
         self, current_user: UserDpo = Depends(get_current_active_user)
-    ) -> Token:
-        return Token.generate(current_user)
+    ) -> TokenJson:
+        return TokenJson.generate(current_user)
 
     def revoke(self, current_user: UserDpo = Depends(get_current_active_user)) -> None:
         """ログアウト処理
