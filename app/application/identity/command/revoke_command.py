@@ -12,4 +12,3 @@ class RevokeCommand:
     @staticmethod
     def from_(dpo: UserDpo) -> RevokeCommand:
         return RevokeCommand(dpo.user.email_address.value)
-
