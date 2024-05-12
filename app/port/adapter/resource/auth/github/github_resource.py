@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from application.identity import IdentityApplicationService
 from application.identity.command import AuthenticateUserCommand
 from port.adapter.resource.auth.github.request import AccessTokenRequest
-from port.adapter.resource.auth.response import Token
+from port.adapter.resource.auth.response import TokenJson
 
 
 class GitHubResource:
@@ -16,10 +16,10 @@ class GitHubResource:
         self.__client_id = client_id
         self.__client_secret = client_secret
         self.router.add_api_route(
-            "/token", self.token, methods=["POST"], response_model=Token
+            "/token", self.token, methods=["POST"], response_model=TokenJson
         )
 
-    def token(self, request: AccessTokenRequest = Depends()) -> Token:
+    def token(self, request: AccessTokenRequest = Depends()) -> TokenJson:
         # 一時コード指定で GitHub からアクセストークンを取得する
         access_token = requests.post(
             "https://github.com/login/oauth/access_token",
@@ -42,4 +42,4 @@ class GitHubResource:
         dpo = application_service.authenticate_github_user(command)
 
         # アクセストークンを発行
-        return Token.generate(dpo)
+        return TokenJson.generate(dpo)
