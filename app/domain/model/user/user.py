@@ -123,21 +123,43 @@ class User:
                 return e
         return None
 
+    def latest_token_of(self, type: Token.Type) -> Token | None:
+        """最新トークンを取得する"""
+        latest_token = None
+        for e in self._tokens:
+            if not e.is_(type):
+                continue
+
+            if latest_token is None or latest_token.expires_at < e.expires_at:
+                latest_token = e
+
+        return latest_token
+
     def tokens_of(self, type: Token.Type) -> set[Token]:
         """トークン名指定で全ての該当トークンを取得できる"""
         return {e for e in self._tokens if e.is_(type)}
 
-    def generate_verification_token(self) -> Token:
-        """ユーザー確認トークンを発行する"""
-        token = Token.Type.VERIFICATION.generate()
+    def generate(self, type: Token.Type) -> Token:
+        """トークンを発行する"""
+        token = type.generate()
         self._tokens.add(token)
         return token
 
-    def generate_password_reset_token(self) -> Token:
-        """パスワードリセットトークンを発行する"""
-        token = Token.Type.PASSWORD_RESET.generate()
-        self._tokens.add(token)
-        return token
+    def login(self) -> None:
+        """アクセストークンとリフレッシュトークンを発行してログインする"""
+        if not self.is_verified():
+            raise PermissionError("ユーザー認証が完了していないため、ログインできません。")
+        # 前回のトークンが残っていたら削除する。
+        # TODO : 複数のデバイスでログインするユーザーの場合、全てのデバイスのトークンが削除されるが問題ないのか？
+        self.logout()
+        self.generate(Token.Type.ACCESS)
+        self.generate(Token.Type.REFRESH)
+
+    def logout(self) -> None:
+        for token in self.tokens_of(Token.Type.ACCESS):
+            self._tokens.remove(token)
+        for token in self.tokens_of(Token.Type.REFRESH):
+            self._tokens.remove(token)
 
     def verified(self) -> None:
         """ユーザー確認を完了できる"""

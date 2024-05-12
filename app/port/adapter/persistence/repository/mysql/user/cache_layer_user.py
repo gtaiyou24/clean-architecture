@@ -29,24 +29,14 @@ class CacheLayerUser:
         return self.values[key]
 
     def user_or_origin_with_token(self, token: str) -> User | None:
-        key = f'token-{token}'
-        if key in self.values.keys():
-            return self.values[key]
-
-        optional = self.__driver_manager_user.find_by_token(token)
-        self.values[key] = optional
-        return self.values[key]
+        return self.__driver_manager_user.find_by_token(token)
 
     def set(self, user: User) -> None:
         self.__driver_manager_user.upsert(user)
         # キャッシュを更新する
         self.values[f'email_address-{user.email_address.value}'] = user
-        for token in user.tokens:
-            self.values[f'token-{token.value}'] = user
 
     def delete(self, user: User) -> None:
         self.__driver_manager_user.delete(user)
         # キャッシュを更新する
         self.values[f'email_address-{user.email_address.value}'] = None
-        for token in user.tokens:
-            self.values[f'token-{token.value}'] = None

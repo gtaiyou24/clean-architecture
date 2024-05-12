@@ -1,32 +1,22 @@
 from di import DIContainer
 from fastapi import HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError
 
 from application.identity import IdentityApplicationService
 from application.identity.dpo import UserDpo
-from port.adapter.resource.jwt import JWTEncoder
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> UserDpo:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = JWTEncoder.decode(token)
-        email_address: str = payload.get("sub")
-        if email_address is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
     application_service = DIContainer.instance().resolve(IdentityApplicationService)
-    dpo = application_service.user(email_address)
+    dpo = application_service.user_with_token(token)
     if dpo is None:
-        raise credentials_exception
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return dpo
 
 

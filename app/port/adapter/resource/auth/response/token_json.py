@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from datetime import timedelta, datetime
-
 from pydantic import BaseModel, Field
 
 from application.identity.dpo import UserDpo
-from port.adapter.resource.jwt import JWTEncoder
+from domain.model.user import Token
 
 
 class TokenJson(BaseModel):
@@ -16,17 +14,13 @@ class TokenJson(BaseModel):
 
     @staticmethod
     def generate(dpo: UserDpo) -> TokenJson:
-        now = datetime.now()
-        expires_at = now + timedelta(hours=1)
-        access_token = JWTEncoder.encode(
-            {"sub": dpo.user.email_address.value, "exp": expires_at}
-        )
-        refresh_token = JWTEncoder.encode(
-            {"sub": dpo.user.email_address.value, "exp": now + timedelta(days=7)}
-        )
+        access_token = dpo.user.latest_token_of(Token.Type.ACCESS)
+        refresh_token = dpo.user.latest_token_of(Token.Type.REFRESH)
+        if access_token is None or refresh_token is None:
+            raise ValueError("アクセストークン、リフレッシュトークンの生成に失敗しました")
         return TokenJson(
-            access_token=access_token,
-            refresh_token=refresh_token,
+            access_token=access_token.value,
+            refresh_token=refresh_token.value,
             token_type="bearer",
-            expires_at=expires_at.timestamp(),
+            expires_at=access_token.expires_at.timestamp(),
         )
