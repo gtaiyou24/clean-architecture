@@ -7,11 +7,11 @@ from application.identity.command import (
     RegisterUserCommand,
     AuthenticateUserCommand,
     ForgotPasswordCommand,
-    ResetPasswordCommand, DeleteUserCommand,
+    ResetPasswordCommand, DeleteUserCommand, RefreshCommand, RevokeCommand,
 )
 from application.identity.dpo import UserDpo
 from domain.model.mail import MailDeliveryService, EmailAddress
-from domain.model.user import UserRepository, User
+from domain.model.user import UserRepository, User, Token
 from exception import SystemException, ErrorCode
 from settings import AppSettings
 
@@ -44,7 +44,7 @@ class IdentityApplicationService:
             )
 
         # メールアドレスが正しいか検証するためにトークンを発行
-        token = user.generate_verification_token()
+        token = user.generate(Token.Type.VERIFICATION)
         self.__user_repository.add(user)
 
         self.__mail_delivery_service.send(
@@ -81,6 +81,7 @@ class IdentityApplicationService:
 
         self.__user_repository.add(user)
 
+    @transactional
     def authenticate_user(self, command: AuthenticateUserCommand) -> UserDpo | None:
         """ユーザー認証"""
         email_address = EmailAddress(command.email_address)
@@ -94,7 +95,7 @@ class IdentityApplicationService:
 
         # メールアドレス検証が終わっていない場合は、確認メールを再送信する
         if not user.is_verified():
-            token = user.generate_verification_token()
+            token = user.generate(Token.Type.VERIFICATION)
             self.__user_repository.add(user)
             self.__mail_delivery_service.send(
                 user.email_address,
@@ -112,6 +113,9 @@ class IdentityApplicationService:
             )
             return None
 
+        user.login()
+        self.__user_repository.add(user)
+
         return UserDpo(user)
 
     @transactional
@@ -125,6 +129,7 @@ class IdentityApplicationService:
 
         user = User.provision(self.__user_repository.next_identity(), email_address, None)
         user.verified()
+        user.login()
         self.__user_repository.add(user)
         return UserDpo(user)
 
@@ -133,6 +138,16 @@ class IdentityApplicationService:
             EmailAddress(email_address)
         )
         if user is None:
+            return None
+        return UserDpo(user)
+
+    @transactional
+    def user_with_token(self, value: str) -> UserDpo | None:
+        user = self.__user_repository.user_with_token(value)
+        if user is None:
+            return None
+        token = user.token_with(value)
+        if token.has_expired():
             return None
         return UserDpo(user)
 
@@ -147,7 +162,7 @@ class IdentityApplicationService:
                 f"{email_address.value} に紐づくユーザーが見つからなかったため、パスワードリセットメールを送信できませんでした。",
             )
 
-        token = user.generate_password_reset_token()
+        token = user.generate(Token.Type.PASSWORD_RESET)
         self.__mail_delivery_service.send(
             user.email_address,
             "パスワードのリセット",
@@ -174,6 +189,28 @@ class IdentityApplicationService:
 
         user.reset_password(command.password, command.reset_token)
 
+        self.__user_repository.add(user)
+
+    @transactional
+    def refresh(self, command: RefreshCommand) -> UserDpo:
+        email_address = EmailAddress(command.email_address)
+        user = self.__user_repository.user_with_email_address(email_address)
+        if user is None:
+            raise SystemException(ErrorCode.VALID_TOKEN_DOES_NOT_EXISTS, '無効なリフレッシュトークンです。')
+
+        user.login()
+        self.__user_repository.add(user)
+
+        return UserDpo(user)
+
+    @transactional
+    def revoke(self, command: RevokeCommand) -> None:
+        email_address = EmailAddress(command.email_address)
+        user = self.__user_repository.user_with_email_address(email_address)
+        if user is None:
+            raise SystemException(ErrorCode.VALID_TOKEN_DOES_NOT_EXISTS, '無効なリフレッシュトークンです。')
+
+        user.logout()
         self.__user_repository.add(user)
 
     @transactional

@@ -8,7 +8,7 @@ from application.identity.command import (
     RegisterUserCommand,
     AuthenticateUserCommand,
     ForgotPasswordCommand,
-    ResetPasswordCommand, DeleteUserCommand,
+    ResetPasswordCommand, DeleteUserCommand, RefreshCommand, RevokeCommand,
 )
 from application.identity.dpo import UserDpo
 from port.adapter.resource import APIResource
@@ -54,67 +54,48 @@ class AuthResource(APIResource):
             "/unregister", self.unregister, methods=["DELETE"], name='ユーザーを削除'
         )
 
-    def register_user(self, request: RegisterUserRequest):
+    @property
+    def identity_application_service(self) -> IdentityApplicationService:
         self.__identity_application_service = (
-            self.__identity_application_service
-            or DIContainer.instance().resolve(IdentityApplicationService)
+                self.__identity_application_service
+                or DIContainer.instance().resolve(IdentityApplicationService)
         )
-        dpo = self.__identity_application_service.provision_user(
-            RegisterUserCommand(request.email_address, request.password)
-        )
+        return self.__identity_application_service
+
+    def register_user(self, request: RegisterUserRequest):
+        command = RegisterUserCommand(request.email_address, request.password)
+        dpo = self.identity_application_service.provision_user(command)
         return UserDescriptorJson.from_(dpo)
 
     def verify_email(self, token: str):
-        self.__identity_application_service = (
-            self.__identity_application_service
-            or DIContainer.instance().resolve(IdentityApplicationService)
-        )
-        self.__identity_application_service.verify_email(token)
+        self.identity_application_service.verify_email(token)
 
     def token(self, request: OAuth2PasswordRequest) -> TokenJson:
-        self.__identity_application_service = (
-            self.__identity_application_service
-            or DIContainer.instance().resolve(IdentityApplicationService)
-        )
-        dpo = self.__identity_application_service.authenticate_user(
-            AuthenticateUserCommand(request.email_address, request.password)
-        )
+        command = AuthenticateUserCommand(request.email_address, request.password)
+        dpo = self.identity_application_service.authenticate_user(command)
         return TokenJson.generate(dpo)
 
     def refresh(
         self, current_user: UserDpo = Depends(get_current_active_user)
     ) -> TokenJson:
-        return TokenJson.generate(current_user)
+        command = RefreshCommand.from_(current_user)
+        dpo = self.identity_application_service.refresh(command)
+        return TokenJson.generate(dpo)
 
     def revoke(self, current_user: UserDpo = Depends(get_current_active_user)) -> None:
-        """ログアウト処理
-        ・JWTを Redis から削除する
-        """
-        pass
+        command = RevokeCommand.from_(current_user)
+        self.identity_application_service.revoke(command)
 
     def forgot_password(self, request: ForgotPasswordRequest):
-        self.__identity_application_service = (
-            self.__identity_application_service
-            or DIContainer.instance().resolve(IdentityApplicationService)
-        )
-        self.__identity_application_service.forgot_password(
-            ForgotPasswordCommand(request.email_address)
-        )
+        command = ForgotPasswordCommand(request.email_address)
+        self.identity_application_service.forgot_password(command)
 
     def reset_password(self, request: ResetPasswordRequest):
-        self.__identity_application_service = (
-            self.__identity_application_service
-            or DIContainer.instance().resolve(IdentityApplicationService)
-        )
-        self.__identity_application_service.reset_password(
-            ResetPasswordCommand(request.token, request.password)
-        )
+        command = ResetPasswordCommand(request.token, request.password)
+        self.identity_application_service.reset_password(command)
 
     def unregister(
             self, current_user: UserDpo = Depends(get_current_active_user)
     ) -> None:
-        self.__identity_application_service = (
-                self.__identity_application_service
-                or DIContainer.instance().resolve(IdentityApplicationService)
-        )
-        self.__identity_application_service.delete(DeleteUserCommand(current_user.user))
+        command = DeleteUserCommand(current_user.user)
+        self.identity_application_service.delete(command)
