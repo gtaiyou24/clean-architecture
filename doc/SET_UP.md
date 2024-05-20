@@ -10,5 +10,5 @@ sh ./bin/rename.sh $YOUR_SYSTEM_NAME
 ## 2. GitHub Actions を有効化
 このテンプレートリポジトリでは、`.github/workflows` にワークフローを定義しています。このワークフローを動かすために予め以下の設定をしてください。
 
- 1. GitHub リポジトリの `settings` > `actions` を開く。
+ 1. GitHub リポジトリの `Settings` > `Actions` > `General` を開く。
  2. `Workflow permissions` を `Read and write permissions` に変更してください。
