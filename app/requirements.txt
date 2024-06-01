@@ -1,6 +1,6 @@
 # App
-fastapi==0.110.2
-uvicorn[standard]==0.29.0
+fastapi==0.111.0
+uvicorn[standard]==0.30.0
 python-multipart==0.0.9
 pydantic-settings==2.2.1
 
@@ -13,7 +13,7 @@ di4injector==0.0.1
 slf4py==0.0.2
 
 # DataBase
-SQLAlchemy==2.0.29
+SQLAlchemy==2.0.30
 mysqlclient==2.2.4 # MySQL
 psycopg2-binary==2.9.9  # Postgresql
 psycopg2==2.9.9  # Postgresql
@@ -22,4 +22,4 @@ psycopg2==2.9.9  # Postgresql
 html2text==2024.2.26
 
 # Other
-requests==2.31.0
+requests==2.32.3
