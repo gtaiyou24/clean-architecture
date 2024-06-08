@@ -141,7 +141,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 |:-------------------------:|:------------------------|:------------------------------------------------------------------------------------------------|
 |    `GCP_WIF_PROVIDER`     | Workload Identity プロバイダ | `projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/<プールID>/providers/<プロバイダID>` <br>・例) プールID : github-actions-pool <br>・例) プロバイダID: github-actions-provider |
 | `GCP_WIF_SERVICE_ACCOUNT` | サービスアカウント               | `github-actions@${PROJECT_ID}.iam.gserviceaccount.com`                                          |
-|     `GCP_PROJECT_ID`      | プロジェクトID                | `cook-cart`                                                                            |
+|     `GCP_PROJECT_ID`      | プロジェクトID                | `clean-architecture`                                                                            |
 | `GCP_CLOUD_RUN_SERVICE_ACCOUNT` | Cloud Run のサービスアカウント | `${CLOUD_RUN_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com`                            |
 
 ### 🔑 7. GitHub Actions が Secret Manager からクレデンシャル情報を取得できるようにする
