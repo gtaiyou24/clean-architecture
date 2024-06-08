@@ -89,11 +89,11 @@ jobs:
 
       - name: Docker イメージをビルド
         run: |-
-          docker build . --tag gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
+          docker build . --tag ${REGION}-docker.pkg.dev/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
 
       - name: Docker イメージを GCR にプッシュ
         run: |-
-          docker push gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
+          docker push ${REGION}-docker.pkg.dev/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
 
       - name: デプロイ
         run: |-
