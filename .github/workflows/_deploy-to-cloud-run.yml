@@ -76,7 +76,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Docker 認証
-        run: gcloud auth configure-docker
+        run: gcloud auth configure-docker ${REGION}-docker.pkg.dev
 
       # 無料枠を超過しないように古いDockerイメージを削除
       - name: 古い Docker イメージを削除
@@ -84,16 +84,21 @@ jobs:
         continue-on-error: true  # 初回はDockerイメージがなくエラーになるため、エラーを無視する
         with:
           args: >-
-            -repo=gcr.io/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}
+            -repo=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}
             -tag-filter-any=.*
 
       - name: Docker イメージをビルド
         run: |-
-          docker build . --tag ${REGION}-docker.pkg.dev/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
+          docker build . --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
+
+      - name: Docker Repository を作成
+        continue-on-error: true  # すでに Repository が存在する場合はエラーになるため、エラーを無視する
+        run: |-
+          gcloud artifacts repositories create $REPO_NAME --repository-format=docker --location=$REGION
 
       - name: Docker イメージを GCR にプッシュ
         run: |-
-          docker push ${REGION}-docker.pkg.dev/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
+          docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
 
       - name: デプロイ
         run: |-
