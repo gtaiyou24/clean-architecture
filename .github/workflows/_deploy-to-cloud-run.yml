@@ -99,7 +99,7 @@ jobs:
         run: |-
           gcloud run deploy $CLOUD_RUN_NAME \
           --region $REGION \
-          --image gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
+          --image ${REGION}-docker.pkg.dev/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
           --platform "managed" \
           --service-account $CLOUD_RUN_SERVICE_ACCOUNT \
           --port 8000 \
