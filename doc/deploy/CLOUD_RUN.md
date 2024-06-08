@@ -28,6 +28,7 @@ gcloud services enable \
   iamcredentials.googleapis.com \
   secretmanager.googleapis.com \
   artifactregistry.googleapis.com \
+  run.googleapis.com \
   --project=${PROJECT_ID}
 ```
 
